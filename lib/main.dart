@@ -13,9 +13,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark().copyWith(
+          primaryColor: customPrimaryColor,
+          scaffoldBackgroundColor: customPrimaryColor,
           colorScheme: ColorScheme.light(
-        primary: customPrimaryColor,
-      )),
+            primary: customPrimaryColor,
+          )),
       home: const HomePage(),
     );
   }
