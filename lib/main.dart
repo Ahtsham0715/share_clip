@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/home_page.dart';
 
 void main() {
@@ -11,7 +12,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
+      theme: ThemeData.dark().copyWith(
+          colorScheme: ColorScheme.light(
+        primary: customPrimaryColor,
+      )),
       home: const HomePage(),
     );
   }
