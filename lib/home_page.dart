@@ -17,6 +17,21 @@ class _HomePageState extends State<HomePage> {
       // backgroundColor: customPrimaryColor,
       drawer: Drawer(
         backgroundColor: customPrimaryColor,
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: customText(txt: 'Shami'),
+              accountEmail: customText(txt: 'abc@gmail.com'),
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: Colors.blueGrey,
+                child: Icon(
+                  Icons.person,
+                  size: 30.0,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: DefaultTabController(
         length: 2,
@@ -39,6 +54,9 @@ class _HomePageState extends State<HomePage> {
               collapseMode: CollapseMode.pin,
             ),
             bottom: const TabBar(
+              indicatorColor: Colors.blueGrey,
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorWeight: 3.0,
               tabs: [
                 Tab(text: "History", icon: Icon(Icons.history)),
                 Tab(
