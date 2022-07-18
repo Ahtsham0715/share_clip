@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       // darkTheme: ThemeData(
       //   brightness: Brightness.dark,
       //   primarySwatch: Colors.blue,
