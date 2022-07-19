@@ -16,6 +16,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final TextEditingController devicecontroller = TextEditingController();
   DateTime now = DateTime.now();
   String? formattedDate;
   bool darkmode = false;
@@ -29,6 +31,80 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  Widget customdailog(
+    title,
+    textfeild1,
+    onpressed,
+    button,
+  ) {
+    return AlertDialog(
+      backgroundColor: customPrimaryColor,
+      title: Center(child: customText(txt: title, fweight: FontWeight.w500)),
+      actions: [
+        textfeild1,
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.01,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('CANCEL')),
+            MaterialButton(onPressed: onpressed, child: Text(button)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget customtextformfield(
+    icon, {
+    initialvalue,
+    hinttext,
+    controller,
+    validator,
+    onsaved,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 19, right: 19, bottom: 10),
+      child: Form(
+        key: _formkey,
+        child: TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            controller: controller,
+            validator: validator,
+            onSaved: onsaved,
+            readOnly: false,
+            initialValue: initialvalue,
+            cursorColor: Colors.teal,
+            style: const TextStyle(
+              fontSize: 15.0,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              prefixIcon: Icon(
+                icon,
+                color: Colors.white,
+              ),
+              hintText: hinttext,
+              labelStyle: const TextStyle(
+                color: Colors.teal,
+              ),
+              filled: true,
+              // enabled: true,
+              fillColor: Colors.transparent,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14.0),
+                borderSide: const BorderSide(color: Colors.teal),
+              ),
+            )),
+      ),
+    );
+  }
+
   Future custombottomsheet() async {
     showModalBottomSheet(
       backgroundColor: customPrimaryColor,
@@ -37,43 +113,68 @@ class _HomePageState extends State<HomePage>
       ),
       context: context,
       builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Center(
-              child: customText(
-                  txt: 'Connected Devices',
-                  padding: 15.0,
-                  fsize: 20.0,
-                  fweight: FontWeight.w500),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: ((context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ListTile(
-                      title: customText(
-                          txt: 'Device ${index + 1}',
-                          fsize: 20.0,
-                          fweight: FontWeight.w400),
-                      trailing: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 22.0,
+        return StatefulBuilder(builder: (context, innersetState) {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Center(
+                child: customText(
+                    txt: 'Connected Devices',
+                    padding: 15.0,
+                    fsize: 20.0,
+                    fweight: FontWeight.w500),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: ((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ListTile(
+                        title: customText(
+                            txt: 'Device ${index + 1}',
+                            fsize: 20.0,
+                            fweight: FontWeight.w400),
+                        trailing: IconButton(
+                          onPressed: () {
+                            devicecontroller.text = 'Device ${index + 1}';
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return customdailog(
+                                      'Edit Device Name',
+                                      customtextformfield(
+                                        Icons.edit,
+                                        hinttext: 'Device Name',
+                                        controller: devicecontroller,
+                                        onsaved: (value) {
+                                          devicecontroller.text = value!;
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Please Enter Device Name ";
+                                          }
+                                        },
+                                      ), () {
+                                    if (_formkey.currentState!.validate()) {}
+                                  }, 'SUBMIT');
+                                });
+                          },
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 22.0,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
-            ),
-          ],
-        );
+            ],
+          );
+        });
       },
     );
   }
