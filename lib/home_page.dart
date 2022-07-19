@@ -29,6 +29,55 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  Future custombottomsheet() async {
+    showModalBottomSheet(
+      backgroundColor: customPrimaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Center(
+              child: customText(
+                  txt: 'Connected Devices',
+                  padding: 15.0,
+                  fsize: 20.0,
+                  fweight: FontWeight.w500),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: ListView.builder(
+                itemCount: 5,
+                itemBuilder: ((context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListTile(
+                      title: customText(
+                          txt: 'Device ${index + 1}',
+                          fsize: 20.0,
+                          fweight: FontWeight.w400),
+                      trailing: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 22.0,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,7 +199,9 @@ class _HomePageState extends State<HomePage>
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        custombottomsheet();
+                      },
                       icon: const Icon(
                         Icons.devices_other,
                         size: 28.0,
