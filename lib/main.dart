@@ -14,16 +14,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      // darkTheme: ThemeData(
-      //   brightness: Brightness.dark,
-      //   primarySwatch: Colors.blue,
-      //   primaryColor: customPrimaryColor,
-      // ),
       theme: ThemeData.dark().copyWith(
           primaryColor: customPrimaryColor,
           scaffoldBackgroundColor: customPrimaryColor,
           colorScheme: ColorScheme.light(
             tertiary: customPrimaryColor,
+
             // brightness: Brightness.light,
             primary: customPrimaryColor,
           )),

@@ -148,3 +148,9 @@ void rawsnackbar(txt, {int duration = 3}) {
     duration: Duration(seconds: duration),
   );
 }
+
+Widget customdivider({thick = 0.5}) {
+  return Divider(
+    thickness: thick,
+  );
+}

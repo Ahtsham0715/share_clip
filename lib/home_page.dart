@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
+import 'package:share_clip/settings.dart';
 import 'package:share_clip/utils.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,6 +18,7 @@ class _HomePageState extends State<HomePage>
   late TabController _tabController;
   DateTime now = DateTime.now();
   String? formattedDate;
+  bool darkmode = false;
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
@@ -32,7 +35,7 @@ class _HomePageState extends State<HomePage>
       // backgroundColor: customPrimaryColor,
       floatingActionButton: _tabController.index == 1
           ? FloatingActionButton.extended(
-              backgroundColor: Colors.deepPurple[400],
+              backgroundColor: Colors.teal,
               onPressed: () {},
               label: customText(
                   txt: ' File ',
@@ -50,37 +53,71 @@ class _HomePageState extends State<HomePage>
         backgroundColor: customPrimaryColor,
         child: ListView(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: UserAccountsDrawerHeader(
-                accountName: customText(txt: 'Shami'),
-                accountEmail: customText(txt: 'abc@gmail.com'),
-                currentAccountPicture: const CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  child: Icon(
-                    Icons.person,
-                    size: 50.0,
-                    color: Colors.white60,
-                  ),
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                color: customPrimaryColor,
+              ),
+              accountName: customText(txt: 'Shami'),
+              accountEmail: customText(txt: 'abc@gmail.com'),
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: Colors.grey,
+                child: Icon(
+                  Icons.person,
+                  size: 50.0,
+                  color: Colors.white60,
                 ),
               ),
             ),
+            customdivider(),
             ListTile(
-              onTap: () {},
-              title: customText(txt: 'Settings', fsize: 18.0),
+              dense: true,
+              onTap: () {
+                Get.to(
+                  () => const SettingsPage(),
+                );
+              },
+              title: customText(
+                txt: 'Settings',
+                fsize: 18.0,
+                fweight: FontWeight.w500,
+              ),
               leading: const Icon(
                 Icons.settings,
                 color: Colors.white,
               ),
             ),
+            customdivider(),
             SwitchListTile(
-              title: customText(txt: 'Dark Mode', fsize: 18.0),
+              dense: true,
+              title: customText(
+                txt: 'Dark Mode',
+                fsize: 18.0,
+                fweight: FontWeight.w500,
+              ),
               secondary: const Icon(
-                Icons.dark_mode_outlined,
+                Icons.dark_mode,
                 color: Colors.white,
               ),
-              value: false,
-              onChanged: (val) {},
+              value: darkmode,
+              onChanged: (val) {
+                setState(() {
+                  darkmode = val;
+                });
+              },
+            ),
+            customdivider(),
+            ListTile(
+              dense: true,
+              onTap: () {},
+              title: customText(
+                txt: 'Sign out',
+                fsize: 18.0,
+                fweight: FontWeight.w500,
+              ),
+              leading: const Icon(
+                Icons.logout_rounded,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -127,8 +164,9 @@ class _HomePageState extends State<HomePage>
                   indicatorColor: Colors.blueGrey,
                   indicatorSize: TabBarIndicatorSize.label,
                   indicatorWeight: 3.0,
+                  labelColor: Colors.teal,
                   unselectedLabelColor:
-                      const Color.fromARGB(255, 188, 159, 238),
+                      const Color.fromARGB(255, 190, 189, 192),
                   tabs: const [
                     Tab(
                       text: "Clipboard",
@@ -175,12 +213,12 @@ class _HomePageState extends State<HomePage>
                                 'clipboard data\nhdjsfsddsf\nasjdsja\nsgahd\nsdndjdsfds\nkjsdfj',
                                 style: TextStyle(
                                   fontSize: 17.0,
+                                  color: Colors.white,
                                   // fontWeight: FontWeight.bold,
                                 ),
                               ),
                               trailing: customText(
-                                txt: formattedDate,
-                              ),
+                                  txt: formattedDate, clr: Colors.white),
                             ),
                             ListTile(
                               minVerticalPadding: 0.0,
