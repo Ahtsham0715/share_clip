@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/utils.dart';
 
@@ -13,10 +14,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
+  DateTime now = DateTime.now();
+  String? formattedDate;
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
+    formattedDate = DateFormat('EEE d MMM').format(now); //kk:mm:ss
     super.initState();
     _tabController.addListener(() {
       setState(() {});
@@ -27,7 +30,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: customPrimaryColor,
-      floatingActionButton: _tabController.index == 0
+      floatingActionButton: _tabController.index == 1
           ? FloatingActionButton.extended(
               backgroundColor: Colors.deepPurple[400],
               onPressed: () {},
@@ -64,17 +67,26 @@ class _HomePageState extends State<HomePage>
             ),
             ListTile(
               onTap: () {},
-              title: customText(txt: 'Settings', fsize: 19.0),
+              title: customText(txt: 'Settings', fsize: 18.0),
               leading: const Icon(
                 Icons.settings,
                 color: Colors.white,
               ),
             ),
+            SwitchListTile(
+              title: customText(txt: 'Dark Mode', fsize: 18.0),
+              secondary: const Icon(
+                Icons.dark_mode_outlined,
+                color: Colors.white,
+              ),
+              value: false,
+              onChanged: (val) {},
+            ),
           ],
         ),
       ),
       body: DefaultTabController(
-        length: 2,
+        length: 3,
         child: NestedScrollView(
           headerSliverBuilder: (context, value) {
             return [
@@ -115,11 +127,20 @@ class _HomePageState extends State<HomePage>
                   indicatorColor: Colors.blueGrey,
                   indicatorSize: TabBarIndicatorSize.label,
                   indicatorWeight: 3.0,
+                  unselectedLabelColor:
+                      const Color.fromARGB(255, 188, 159, 238),
                   tabs: const [
-                    Tab(text: "History", icon: Icon(Icons.history)),
+                    Tab(
+                      text: "Clipboard",
+                      icon: Icon(FontAwesomeIcons.clipboardCheck),
+                    ),
+                    Tab(
+                      text: "Files",
+                      icon: Icon(FontAwesomeIcons.solidFileLines),
+                    ),
                     Tab(
                       text: "Pinned",
-                      icon: Icon(Icons.push_pin_outlined),
+                      icon: Icon(Icons.push_pin_sharp),
                     ),
                   ],
                 ),
@@ -139,39 +160,80 @@ class _HomePageState extends State<HomePage>
                     child: Padding(
                       padding:
                           const EdgeInsets.only(left: 19, right: 19, top: 13),
-                      child: Column(
-                        children: ListTile.divideTiles(
-                          context: context,
-                          tiles: [
+                      child: Container(
+                        // height: MediaQuery.of(context).size.height * 0.2,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: const Color.fromARGB(255, 20, 35, 43),
+                        ),
+                        child: Column(
+                          children: [
                             ListTile(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0)),
-                              tileColor: const Color.fromARGB(255, 20, 35, 43),
+                              // isThreeLine: true,
+                              // dense: false,
                               title: const Text(
-                                'd',
+                                'clipboard data\nhdjsfsddsf\nasjdsja\nsgahd\nsdndjdsfds\nkjsdfj',
                                 style: TextStyle(
                                   fontSize: 17.0,
-                                  fontWeight: FontWeight.bold,
+                                  // fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              // trailing: Icon(
-                              //   IconData(
-                              //     args['department_icon_code'],
-                              //     fontFamily: args['department_icon_fontfamily'],
-                              //     fontPackage: args['department_icon_fontpackage'],
-                              //   ),
-                              //   color: Colors.teal,
-                              //   size: 33,
-                              // ),
+                              trailing: customText(
+                                txt: formattedDate,
+                              ),
+                            ),
+                            ListTile(
+                              minVerticalPadding: 0.0,
+                              leading: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5.0),
+                                child: Icon(
+                                  Icons.device_unknown,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: ButtonBar(
+                                alignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    // splashColor: Colors.white,
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.copy_outlined,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.push_pin_outlined,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
-                        ).toList(),
+                        ),
                       ),
                     ),
                   );
                 },
               ),
               // 2nd tab
+              const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+              // 3rd tab
               const Center(
                 child: CircularProgressIndicator(
                   color: Colors.white,
