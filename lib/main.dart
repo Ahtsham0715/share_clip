@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/home_page.dart';
+import 'package:share_clip/signin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
             primary: customPrimaryColor,
           )),
       themeMode: ThemeMode.dark,
-      home: const HomePage(),
+      home: const SigninPage(),
     );
   }
 }
