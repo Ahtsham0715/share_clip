@@ -46,7 +46,8 @@ class _SigninPageState extends State<SigninPage> {
                 shape: MaterialStateProperty.all(
                   const StadiumBorder(),
                 ),
-                backgroundColor: MaterialStateProperty.all(Colors.teal),
+                backgroundColor:
+                    MaterialStateProperty.all(Colors.teal.withAlpha(100)),
               ),
               onPressed: () {
                 Get.to(

@@ -1,10 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
-import 'package:share_clip/home_page.dart';
-import 'package:share_clip/signin.dart';
+import 'package:share_clip/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -25,7 +29,7 @@ class MyApp extends StatelessWidget {
             primary: customPrimaryColor,
           )),
       themeMode: ThemeMode.dark,
-      home: const SigninPage(),
+      home: const SplashScreen(),
     );
   }
 }

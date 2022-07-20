@@ -236,25 +236,25 @@ class _HomePageState extends State<HomePage>
                 color: Colors.white,
               ),
             ),
-            customdivider(),
-            SwitchListTile(
-              dense: true,
-              title: customText(
-                txt: 'Dark Mode',
-                fsize: 18.0,
-                fweight: FontWeight.w500,
-              ),
-              secondary: const Icon(
-                Icons.dark_mode,
-                color: Colors.white,
-              ),
-              value: darkmode,
-              onChanged: (val) {
-                setState(() {
-                  darkmode = val;
-                });
-              },
-            ),
+            // customdivider(),
+            // SwitchListTile(
+            //   dense: true,
+            //   title: customText(
+            //     txt: 'Dark Mode',
+            //     fsize: 18.0,
+            //     fweight: FontWeight.w500,
+            //   ),
+            //   secondary: const Icon(
+            //     Icons.dark_mode,
+            //     color: Colors.white,
+            //   ),
+            //   value: darkmode,
+            //   onChanged: (val) {
+            //     setState(() {
+            //       darkmode = val;
+            //     });
+            //   },
+            // ),
             customdivider(),
             ListTile(
               dense: true,
@@ -279,7 +279,7 @@ class _HomePageState extends State<HomePage>
             return [
               SliverAppBar(
                 title: customText(
-                    txt: 'Share Clip', fsize: 22.0, fweight: FontWeight.w500),
+                    txt: 'ShareClip', fsize: 22.0, fweight: FontWeight.w500),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
