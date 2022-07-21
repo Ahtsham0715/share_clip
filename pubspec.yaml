@@ -43,6 +43,7 @@ dependencies:
   connectivity_plus: any
   permission_handler: any
   badges: any
+  google_sign_in: any
 
 dev_dependencies:
   flutter_test:
