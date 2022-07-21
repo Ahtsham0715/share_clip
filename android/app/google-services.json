@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "912626991406",
+    "project_id": "shareclip-46cdd",
+    "storage_bucket": "shareclip-46cdd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912626991406:android:13e4fb7cdd00a9507ebabf",
+        "android_client_info": {
+          "package_name": "com.example.share_clip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912626991406-p9q39qo4itaa9bi695c79fnbcvpvfcnv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE8m7J5T3eUARzLp1TvH6W28efX6mQuvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912626991406-p9q39qo4itaa9bi695c79fnbcvpvfcnv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
