@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -28,10 +29,12 @@ class _HomePageState extends State<HomePage>
   DateTime now = DateTime.now();
   String? formattedDate;
   bool darkmode = false;
+
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
     formattedDate = DateFormat('EEE d MMM').format(now); //kk:mm:ss
+    readdeviceinfo();
     super.initState();
     _tabController.addListener(() {
       setState(() {});
@@ -43,6 +46,13 @@ class _HomePageState extends State<HomePage>
         );
       }
     });
+  }
+
+  Future readdeviceinfo() async {
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    final deviceInfo = await deviceInfoPlugin.deviceInfo;
+    final devicedata = deviceInfo.toMap();
+    print(devicedata);
   }
 
   Widget customdailog(

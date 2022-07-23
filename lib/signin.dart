@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:get/get.dart';
 import 'package:share_clip/custom%20widgets/custom_toast.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
@@ -16,6 +18,43 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   bool isworking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    readdeviceinfo();
+  }
+
+  Future readdeviceinfo() async {
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    final deviceInfo = await deviceInfoPlugin.deviceInfo;
+    final devicedata = deviceInfo.toMap();
+    print(devicedata);
+    return devicedata;
+  }
+
+  Future setdeviceinfo() async {
+    var deviceData;
+    await readdeviceinfo().then((value) {
+      deviceData = value;
+    });
+    try {
+      await FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc('connected_devices')
+          .set({
+        'devices': FieldValue.arrayUnion([
+          {
+            'device_id': deviceData['id'], //QP1A.190711.020
+            'device_name': deviceData['model'],
+          }
+        ]),
+      }, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      customtoast('Error Saving Data');
+    }
+  }
+
   Future signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -29,9 +68,10 @@ class _SigninPageState extends State<SigninPage> {
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-
     try {
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential authResult =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      authResult.additionalUserInfo!.isNewUser ? await setdeviceinfo() : null;
       setState(() {
         isworking = false;
       });

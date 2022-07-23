@@ -44,6 +44,8 @@ dependencies:
   permission_handler: any
   badges: any
   google_sign_in: any
+  device_info_plus: any
+  get_storage: any
 
 dev_dependencies:
   flutter_test:
