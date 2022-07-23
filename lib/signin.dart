@@ -74,7 +74,9 @@ class _SigninPageState extends State<SigninPage> {
                 // Get.to(
                 //   () => const HomePage(),
                 // );
-                signInWithGoogle();
+                signInWithGoogle().then((value) {
+                  print(value);
+                });
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:share_clip/home_page.dart';
 import 'package:share_clip/signin.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -60,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
             () => const SigninPage(),
           );
         } else {
-          // Get.to(() => const AdminMainPage());
+          Get.to(() => const HomePage());
         }
       });
     } else {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:share_clip/utils.dart';
 import 'package:get/get.dart';
 import 'package:file_picker/file_picker.dart';
@@ -153,4 +154,49 @@ Widget customdivider({thick = 0.5}) {
   return Divider(
     thickness: thick,
   );
+}
+
+Future customYesNoDialog(
+    {required ctx,
+    required titletext,
+    required contenttext,
+    required yesOnTap}) async {
+  return showDialog(
+    context: ctx,
+    builder: (context) => AlertDialog(
+      title: Text(titletext),
+      content: Text(contenttext),
+      actions: <Widget>[
+        MaterialButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('No'),
+        ),
+        MaterialButton(
+          onPressed: yesOnTap,
+          child: const Text('Yes'),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<bool> onWillPop(ctx) async {
+  return (await showDialog(
+        context: ctx,
+        builder: (context) => AlertDialog(
+          title: const Text('Are you sure?'),
+          content: const Text('Do you want to exit the App'),
+          actions: <Widget>[
+            MaterialButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            MaterialButton(
+              onPressed: () => SystemNavigator.pop(),
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      )) ??
+      false;
 }
