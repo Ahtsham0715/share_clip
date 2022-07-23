@@ -46,6 +46,8 @@ dependencies:
   google_sign_in: any
   device_info_plus: any
   get_storage: any
+  flutter_local_notifications: any
+  workmanager: any
 
 dev_dependencies:
   flutter_test:
