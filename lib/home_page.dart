@@ -41,8 +41,6 @@ class _HomePageState extends State<HomePage>
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
     formattedDate = DateFormat('EEE d MMM').format(now); //kk:mm:ss
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     readdeviceinfo();
     super.initState();
     _tabController.addListener(() {
@@ -55,6 +53,8 @@ class _HomePageState extends State<HomePage>
         );
       }
     });
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
@@ -306,9 +306,8 @@ class _HomePageState extends State<HomePage>
               ListTile(
                 dense: true,
                 onTap: () {
-                  Get.to(
-                    () => const SettingsPage(),
-                  );
+                  Get.to(() => const SettingsPage(),
+                      transition: Transition.noTransition);
                 },
                 title: customText(
                   txt: 'Settings',
@@ -446,82 +445,122 @@ class _HomePageState extends State<HomePage>
             body: TabBarView(
               controller: _tabController,
               children: [
-                ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        setState(() {});
-                      },
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 19, right: 19, top: 13),
-                        child: Container(
-                          // height: MediaQuery.of(context).size.height * 0.2,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
-                            color: const Color.fromARGB(255, 20, 35, 43),
+                RefreshIndicator(
+                  onRefresh: () async {
+                    setState(() {});
+                  },
+                  backgroundColor: Colors.teal,
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(12.0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0)),
+                          tileColor: Colors.teal.withAlpha(100),
+                          // isThreeLine: true,
+                          // dense: false,
+                          subtitle: const Text(
+                            'Sync latest clipboard data across connected devices',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.white,
+                              // fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                // isThreeLine: true,
-                                // dense: false,
-                                title: const Text(
-                                  'clipboard data\nhdjsfsddsf\nasjdsja\nsgahd\nsdndjdsfds\nkjsdfj',
-                                  style: TextStyle(
-                                    fontSize: 17.0,
-                                    color: Colors.white,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
+                          trailing: MaterialButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            onPressed: () {},
+                            color: Colors.teal,
+                            child: customText(txt: 'Send', clr: Colors.white),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 19, right: 19, top: 13),
+                              child: Container(
+                                // height: MediaQuery.of(context).size.height * 0.2,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: const Color.fromARGB(255, 20, 35, 43),
                                 ),
-                                trailing: customText(
-                                    txt: formattedDate, clr: Colors.white),
-                              ),
-                              ListTile(
-                                minVerticalPadding: 0.0,
-                                leading: const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.0),
-                                  child: Icon(
-                                    Icons.device_unknown,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                title: ButtonBar(
-                                  alignment: MainAxisAlignment.end,
-                                  mainAxisSize: MainAxisSize.min,
+                                child: Column(
                                   children: [
-                                    IconButton(
-                                      // splashColor: Colors.white,
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.copy_outlined,
-                                        color: Colors.white,
+                                    ListTile(
+                                      // isThreeLine: true,
+                                      // dense: false,
+                                      title: const Text(
+                                        'clipboard data\nhdjsfsddsf\nasjdsja\nsgahd\nsdndjdsfds\nkjsdfj',
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                          color: Colors.white,
+                                          // fontWeight: FontWeight.bold,
+                                        ),
                                       ),
+                                      trailing: customText(
+                                          txt: formattedDate,
+                                          clr: Colors.white),
                                     ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.push_pin_outlined,
-                                        color: Colors.white,
+                                    ListTile(
+                                      minVerticalPadding: 0.0,
+                                      leading: const Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 5.0),
+                                        child: Icon(
+                                          Icons.device_unknown,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
+                                      title: ButtonBar(
+                                        alignment: MainAxisAlignment.end,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            // splashColor: Colors.white,
+                                            onPressed: () {},
+                                            icon: const Icon(
+                                              Icons.copy_outlined,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(
+                                              Icons.push_pin_outlined,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
                 // 2nd tab
                 const Center(
