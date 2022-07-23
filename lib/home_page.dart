@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +30,9 @@ class _HomePageState extends State<HomePage>
   late TabController _tabController;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController devicecontroller = TextEditingController();
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   DateTime now = DateTime.now();
   String? formattedDate;
   bool darkmode = false;
@@ -34,6 +41,8 @@ class _HomePageState extends State<HomePage>
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
     formattedDate = DateFormat('EEE d MMM').format(now); //kk:mm:ss
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     readdeviceinfo();
     super.initState();
     _tabController.addListener(() {
@@ -48,11 +57,55 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    if (result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi) {
+      styledsnackbar(txt: "You are online now");
+    } else {
+      styledsnackbar(txt: 'You are currently offline');
+    }
+  }
+
   Future readdeviceinfo() async {
     final deviceInfoPlugin = DeviceInfoPlugin();
     final deviceInfo = await deviceInfoPlugin.deviceInfo;
     final devicedata = deviceInfo.toMap();
     print(devicedata);
+    return devicedata;
+  }
+
+  Future deletedevice() async {
+    List devices = [];
+    List updateddeviceslist = [];
+    var thisdevice;
+    readdeviceinfo().then((value) => thisdevice = value);
+    await FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.uid)
+        .doc('connected_devices')
+        .get()
+        .then((DocumentSnapshot mydevices) {
+      if (mydevices.exists) {
+        devices = mydevices['devices'];
+      }
+      for (var device in devices) {
+        if (device['device_id'] != thisdevice['id']) {
+          updateddeviceslist.add({
+            'device_id': device['device_id'], //QP1A.190711.020
+            'device_name': device['device_name'],
+          });
+        }
+      }
+    });
+    try {
+      await FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc('connected_devices')
+          .set({
+        'devices': updateddeviceslist,
+      }, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      customtoast('unable to delete device');
+    }
   }
 
   Widget customdailog(
@@ -294,14 +347,17 @@ class _HomePageState extends State<HomePage>
                       ctx: context,
                       titletext: 'Are you sure?',
                       contenttext: 'Do you want to Logout?',
-                      yesOnTap: () {
+                      yesOnTap: () async {
                         Navigator.pop(context);
                         customdialogcircularprogressindicator(
                             'Logging out... ');
                         try {
-                          GoogleSignIn().disconnect();
-                          FirebaseAuth.instance.signOut();
-                          Navigator.pop(context);
+                          await deletedevice().then((value) {
+                            GoogleSignIn().disconnect();
+                            FirebaseAuth.instance.signOut();
+                            Navigator.pop(context);
+                          });
+
                           customtoast('User logged out');
                         } catch (e) {
                           Navigator.pop(context);

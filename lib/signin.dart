@@ -69,9 +69,8 @@ class _SigninPageState extends State<SigninPage> {
       idToken: googleAuth?.idToken,
     );
     try {
-      final UserCredential authResult =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      authResult.additionalUserInfo!.isNewUser ? await setdeviceinfo() : null;
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      await setdeviceinfo();
       setState(() {
         isworking = false;
       });
@@ -87,6 +86,9 @@ class _SigninPageState extends State<SigninPage> {
         isworking = false;
       });
     }
+    // setState(() {
+    //   isworking = false;
+    // });
   }
 
   @override
@@ -128,8 +130,9 @@ class _SigninPageState extends State<SigninPage> {
                   shape: MaterialStateProperty.all(
                     const StadiumBorder(),
                   ),
-                  backgroundColor:
-                      MaterialStateProperty.all(Colors.teal.withAlpha(100)),
+                  backgroundColor: MaterialStateProperty.all(!isworking
+                      ? Colors.teal.withAlpha(100)
+                      : Colors.grey.withAlpha(100)),
                 ),
                 onPressed: isworking
                     ? null
