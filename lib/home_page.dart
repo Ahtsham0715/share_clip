@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/settings.dart';
+import 'package:share_clip/signin.dart';
 import 'package:share_clip/utils.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,6 +30,13 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _tabController.addListener(() {
       setState(() {});
+    });
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        Get.to(
+          () => const SigninPage(),
+        );
+      }
     });
   }
 
@@ -267,7 +276,11 @@ class _HomePageState extends State<HomePage>
                       ctx: context,
                       titletext: 'Are you sure?',
                       contenttext: 'Do you want to Logout?',
-                      yesOnTap: () {});
+                      yesOnTap: () {
+                        FirebaseAuth.instance.signOut().then((value) {
+                          Navigator.pop(context);
+                        });
+                      });
                 },
                 title: customText(
                   txt: 'Logout',

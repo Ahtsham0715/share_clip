@@ -164,6 +164,7 @@ Future customYesNoDialog(
   return showDialog(
     context: ctx,
     builder: (context) => AlertDialog(
+      backgroundColor: customPrimaryColor,
       title: Text(titletext),
       content: Text(contenttext),
       actions: <Widget>[
@@ -184,6 +185,7 @@ Future<bool> onWillPop(ctx) async {
   return (await showDialog(
         context: ctx,
         builder: (context) => AlertDialog(
+          backgroundColor: customPrimaryColor,
           title: const Text('Are you sure?'),
           content: const Text('Do you want to exit the App'),
           actions: <Widget>[

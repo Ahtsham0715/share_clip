@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:share_clip/home_page.dart';
 import 'package:share_clip/signin.dart';
 
@@ -55,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> initTimer() async {
     if (await CheckConnection()) {
       Timer(const Duration(seconds: 1), () async {
-        if (FirebaseAuth.instance.currentUser == null) {
+        if (GoogleSignIn().currentUser == null) {
           // pehly != tha
           Get.to(
             () => const SigninPage(),
