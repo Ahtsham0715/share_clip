@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -56,13 +55,20 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> initTimer() async {
     if (await CheckConnection()) {
       Timer(const Duration(seconds: 1), () async {
-        if (GoogleSignIn().currentUser == null) {
+        if (await GoogleSignIn().isSignedIn() ||
+            FirebaseAuth.instance.currentUser != null) {
           // pehly != tha
           Get.to(
-            () => const SigninPage(),
+            () => const HomePage(),
+            transition: Transition.rightToLeftWithFade,
+            duration: const Duration(seconds: 1),
           );
         } else {
-          Get.to(() => const HomePage());
+          Get.to(
+            () => const SigninPage(),
+            transition: Transition.rightToLeftWithFade,
+            duration: const Duration(seconds: 1),
+          );
         }
       });
     } else {
@@ -104,7 +110,6 @@ class _SplashScreenState extends State<SplashScreen> {
             onPressed: () async {
               SystemNavigator.pop();
             },
-            child: const Text('ok'),
             style: TextButton.styleFrom(
               minimumSize: Size(MediaQuery.of(context).size.width * 0.7,
                   MediaQuery.of(context).size.height * 0.06),
@@ -116,6 +121,7 @@ class _SplashScreenState extends State<SplashScreen> {
               textStyle: const TextStyle(
                   fontSize: 20, fontFamily: "Viga", color: Colors.black),
             ),
+            child: const Text('ok'),
           ),
         ),
       ],

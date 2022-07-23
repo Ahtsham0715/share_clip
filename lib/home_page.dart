@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:share_clip/custom%20widgets/custom_toast.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/settings.dart';
 import 'package:share_clip/signin.dart';
@@ -17,6 +20,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  GoogleSignIn googleSignin = GoogleSignIn();
+  User? currentuser = FirebaseAuth.instance.currentUser;
   late TabController _tabController;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController devicecontroller = TextEditingController();
@@ -220,11 +225,14 @@ class _HomePageState extends State<HomePage>
                 decoration: BoxDecoration(
                   color: customPrimaryColor,
                 ),
-                accountName: customText(txt: 'Shami'),
-                accountEmail: customText(txt: 'abc@gmail.com'),
-                currentAccountPicture: const CircleAvatar(
+                accountName:
+                    customText(txt: currentuser?.displayName.toString()),
+                accountEmail: customText(txt: currentuser?.email.toString()),
+                currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.grey,
-                  child: Icon(
+                  foregroundImage:
+                      CachedNetworkImageProvider('${currentuser?.photoURL}'),
+                  child: const Icon(
                     Icons.person,
                     size: 50.0,
                     color: Colors.white60,
@@ -277,9 +285,18 @@ class _HomePageState extends State<HomePage>
                       titletext: 'Are you sure?',
                       contenttext: 'Do you want to Logout?',
                       yesOnTap: () {
-                        FirebaseAuth.instance.signOut().then((value) {
+                        Navigator.pop(context);
+                        customdialogcircularprogressindicator(
+                            'Logging out... ');
+                        try {
+                          GoogleSignIn().disconnect();
+                          FirebaseAuth.instance.signOut();
                           Navigator.pop(context);
-                        });
+                          customtoast('User logged out');
+                        } catch (e) {
+                          Navigator.pop(context);
+                          customtoast('Error while signing out');
+                        }
                       });
                 },
                 title: customText(
