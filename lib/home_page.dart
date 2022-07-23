@@ -6,12 +6,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:share_clip/custom%20widgets/custom_toast.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
+import 'package:share_clip/notifications.dart';
 import 'package:share_clip/settings.dart';
 import 'package:share_clip/signin.dart';
 import 'package:share_clip/utils.dart';
@@ -53,6 +55,11 @@ class _HomePageState extends State<HomePage>
         );
       }
     });
+    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
+    var settings = InitializationSettings(android: android);
+    flip.initialize(settings);
+    showNotificationWithDefaultSound(flip);
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
