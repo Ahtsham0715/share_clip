@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -55,11 +56,20 @@ class _HomePageState extends State<HomePage>
         );
       }
     });
-    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
-    FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
-    var settings = InitializationSettings(android: android);
-    flip.initialize(settings);
-    showNotificationWithDefaultSound(flip);
+    // var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    // FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
+    // var settings = InitializationSettings(android: android);
+    // flip.initialize(
+    //   settings,
+    //   onSelectNotification: (pay) {},
+    // );
+    // showNotificationWithDefaultSound(flip);
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+    // shownotification();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
@@ -77,7 +87,7 @@ class _HomePageState extends State<HomePage>
     final deviceInfoPlugin = DeviceInfoPlugin();
     final deviceInfo = await deviceInfoPlugin.deviceInfo;
     final devicedata = deviceInfo.toMap();
-    print(devicedata);
+    // print(devicedata);
     return devicedata;
   }
 
@@ -483,7 +493,9 @@ class _HomePageState extends State<HomePage>
                           trailing: MaterialButton(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5.0)),
-                            onPressed: () {},
+                            onPressed: () {
+                              shownotification();
+                            },
                             color: Colors.teal,
                             child: customText(txt: 'Send', clr: Colors.white),
                           ),

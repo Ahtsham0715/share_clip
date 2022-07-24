@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Get.to(
             () => const HomePage(),
             transition: Transition.rightToLeftWithFade,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 1),
           );
         } else {
           Get.to(
