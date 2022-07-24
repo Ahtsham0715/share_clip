@@ -20,10 +20,17 @@ void main() async {
       [
         NotificationChannel(
             channelGroupKey: 'basic_channel_group',
-            channelKey: 'basic_channel',
-            channelName: 'Basic notifications',
+            channelKey: 'shareclip_channel',
+            channelName: 'shareclip notifications',
             channelDescription: 'Notification channel for basic tests',
             defaultColor: customPrimaryColor,
+            // channelShowBadge: false,
+            // defaultRingtoneType: DefaultRingtoneType.Notification,
+            locked: true,
+            importance: NotificationImportance.Max,
+            playSound: false,
+            defaultPrivacy: NotificationPrivacy.Public,
+            enableVibration: false,
             ledColor: Colors.white)
       ],
       // Channel groups are only visual and are not required

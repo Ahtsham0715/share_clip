@@ -6,17 +6,24 @@ import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 
 Future shownotification() async {
   AwesomeNotifications().cancelAll();
+
   AwesomeNotifications().createNotification(
       content: NotificationContent(
+          notificationLayout: NotificationLayout.Default,
+          payload: {'sendbtn': 'Send'},
           backgroundColor: customPrimaryColor,
-          category: NotificationCategory.LocalSharing,
+          category: NotificationCategory.Service,
+          color: customPrimaryColor,
           autoDismissible: false,
           displayOnBackground: true,
           displayOnForeground: true,
           locked: true,
-          wakeUpScreen: true,
+          // largeIcon: 'asset://assets/images/splash.png',
+          // roundedLargeIcon: true,
+          // bigPicture: 'asset://assets/images/google.png',
+          // wakeUpScreen: true,
           id: 1,
-          channelKey: 'basic_channel',
+          channelKey: 'shareclip_channel',
           title: 'Sync Data',
           body: 'Sync latest clipboard data across connected devices'),
       actionButtons: [
@@ -24,10 +31,11 @@ Future shownotification() async {
           key: 'sendbtn',
           label: 'Send',
           autoDismissible: false,
-          buttonType: ActionButtonType.KeepOnTop,
-          color: Colors.teal,
+          buttonType: ActionButtonType.Default,
+          color: const Color.fromARGB(255, 2, 165, 149),
           enabled: true,
-          // showInCompactView: true,
+          // showInCompactView: false,
+          icon: 'resource://drawable/google.png',
         )
       ]);
 }
