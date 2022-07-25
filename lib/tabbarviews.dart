@@ -72,6 +72,7 @@ Widget tab1view(
                       ),
                       trailing: customText(
                           txt: trailingtxt.toString(),
+                          txtalign: TextAlign.center,
                           clr: Colors.white),
                     ),
                     ListTile(

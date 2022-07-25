@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
-    formattedDate = DateFormat('EEE d MMM').format(now); //kk:mm:ss
+    formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
     readdeviceinfo();
     super.initState();
     _tabController.addListener(() {
@@ -84,8 +84,52 @@ class _HomePageState extends State<HomePage>
         return onWillPop(context);
       },
       child: StreamBuilder<DocumentSnapshot>(
-          stream: null,
+          stream: dbref.collection('clipboarddata').doc(currentuser!.uid).snapshots(),
           builder: (context, snapshot) {
+            var data = snapshot.data!.data();
+            if (snapshot.hasError) {
+              // print(snapshot.error);
+              return const Center(
+                child: Text('Something Went Wrong'),
+              );
+            }
+            if (!snapshot.hasData) {
+              // print(snapshot.error);
+              return const Center(
+                child: Text('No Data Available'),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.teal,
+                ),
+              );
+            }
+            if (snapshot.data!.exists) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.hourglass_empty,
+                      size: 50.0,
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      'No Session Found',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        // color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
             return Scaffold(
               // backgroundColor: customPrimaryColor,
               floatingActionButton: _tabController.index == 1
