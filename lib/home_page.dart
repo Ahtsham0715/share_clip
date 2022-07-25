@@ -83,54 +83,7 @@ class _HomePageState extends State<HomePage>
       onWillPop: () async {
         return onWillPop(context);
       },
-      child: StreamBuilder<DocumentSnapshot>(
-          stream: dbref.collection('clipboarddata').doc(currentuser!.uid).snapshots(),
-          builder: (context, snapshot) {
-            var data = snapshot.data!.data();
-            if (snapshot.hasError) {
-              // print(snapshot.error);
-              return const Center(
-                child: Text('Something Went Wrong'),
-              );
-            }
-            if (!snapshot.hasData) {
-              // print(snapshot.error);
-              return const Center(
-                child: Text('No Data Available'),
-              );
-            }
-            // if (snapshot.connectionState == ConnectionState.waiting) {
-            //   return const Center(
-            //     child: CircularProgressIndicator(
-            //       color: Colors.teal,
-            //     ),
-            //   );
-            // }
-            if (snapshot.data!.exists) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.hourglass_empty,
-                      size: 50.0,
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      'No Session Found',
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold,
-                        // color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return Scaffold(
+      child: Scaffold(
               // backgroundColor: customPrimaryColor,
               floatingActionButton: _tabController.index == 1
                   ? FloatingActionButton.extended(
@@ -235,30 +188,85 @@ class _HomePageState extends State<HomePage>
                       ),
                     ];
                   },
-                  body: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      RefreshIndicator(
-                          child: tab1view(
-                              context: context,
-                              titletxt:
-                                  'clipboard data\nhdjsfsddsf\nasjdsja\nsgahd\nsdndjdsfds\nkjsdfj',
-                              trailingtxt: formattedDate),
-                          backgroundColor: Colors.white,
-                          color: Colors.teal,
-                          onRefresh: () async {
-                            setState(() {});
-                          }),
-                      // 2nd tab
-                      tab2view(context: context),
-                      // 3rd tab
-                      tab3view(context: context),
-                    ],
+                  body: StreamBuilder<DocumentSnapshot>(
+                    stream: dbref.collection('clipboarddata').doc(currentuser!.uid).snapshots(),
+                    builder: (context, snapshot) {
+                       var data = snapshot.data!;
+                       List clipdata = data['data'];
+            if (snapshot.hasError) {
+              // print(snapshot.error);
+              return const Center(
+                child: Text('Something Went Wrong'),
+              );
+            }
+            if (!snapshot.hasData) {
+              // print(snapshot.error);
+              return const Center(
+                child: Text('No Data Available'),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.teal,
+                ),
+              );
+            }
+            if (!snapshot.data!.exists || clipdata.isEmpty){
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.hourglass_empty,
+                      size: 50.0,
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      'No Data Available',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        // color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            
+            else{
+              print(clipdata);
+              return TabBarView(
+                        controller: _tabController,
+                        children: [
+                          RefreshIndicator(
+                              child: tab1view(
+                                  context: context,
+                                   datalist: clipdata),
+                              backgroundColor: Colors.white,
+                              color: Colors.teal,
+                              onRefresh: () async {
+                                setState(() {});
+                              }),
+                          // 2nd tab
+                          tab2view(context: context),
+                          // 3rd tab
+                          tab3view(context: context),
+                        ],
+                      );
+                      
+            }
+                      
+                    }
                   ),
                 ),
               ),
-            );
-          }),
+            ),
     );
   }
 }
+
+

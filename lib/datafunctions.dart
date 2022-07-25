@@ -5,14 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:share_clip/custom%20widgets/custom_toast.dart';
+import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 
 var dbref = FirebaseFirestore.instance;
 var currentuser = FirebaseAuth.instance.currentUser;
 
- DateTime now = DateTime.now();
-var formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
-var getclipboard = Clipboard.getData(Clipboard.kTextPlain);
-// var history =  Clipboard;
+
 void setclipboard(data) {
   Clipboard.setData(ClipboardData(text: data));
 }
@@ -26,18 +24,31 @@ Future readdeviceinfo() async {
 }
 
 Future SyncData() async {
-  dbref
+  
+ DateTime now = DateTime.now();
+var formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
+  var getclipboard = await Clipboard.getData('text/plain');
+print(getclipboard?.text);
+try{
+ dbref
       .collection('clipboarddata')
       .doc(currentuser!.uid)
       .set({
        'data' : [
-
+        {
+          'date': formattedDate,
+          'clipboard_data' : getclipboard!.text
+        }
        ]
       }, SetOptions(merge: true));
+}on FirebaseException catch(e){
+print('error occured .$e');
+}
+ 
 }
 
 Future GetDevices() async {
-  print('clipboard data:$getclipboard');
+  
   List connectedDevices = [];
   await dbref
       .collection('connected_devices')

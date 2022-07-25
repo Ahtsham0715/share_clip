@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
+import 'package:share_clip/datafunctions.dart';
 import 'package:share_clip/notifications.dart';
 
 Widget tab1view(
   {
     required context,
-    required trailingtxt,
-    required titletxt,
+    required datalist
     }
     ) {
   return  Column(
@@ -36,7 +36,8 @@ Widget tab1view(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0)),
             onPressed: () {
-              shownotification();
+              // shownotification();
+              SyncData();
             },
             color: Colors.teal,
             child: customText(txt: 'Send', clr: Colors.white),
@@ -46,7 +47,7 @@ Widget tab1view(
       Expanded(
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: 5,
+          itemCount: datalist.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.only(
@@ -63,7 +64,7 @@ Widget tab1view(
                       // isThreeLine: true,
                       // dense: false,
                       title: Text(
-                        titletxt.toString(),
+                        datalist[index]['clipboard_data'].toString(),
                         style: TextStyle(
                           fontSize: 17.0,
                           color: Colors.white,
@@ -71,7 +72,7 @@ Widget tab1view(
                         ),
                       ),
                       trailing: customText(
-                          txt: trailingtxt.toString(),
+                          txt: datalist[index]['date'].toString(),
                           txtalign: TextAlign.center,
                           clr: Colors.white),
                     ),
