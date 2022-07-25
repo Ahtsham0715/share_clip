@@ -20,6 +20,7 @@ import 'package:share_clip/edit_dialog.dart';
 import 'package:share_clip/notifications.dart';
 import 'package:share_clip/settings.dart';
 import 'package:share_clip/signin.dart';
+import 'package:share_clip/tabbarviews.dart';
 import 'package:share_clip/utils.dart';
 
 class HomePage extends StatefulWidget {
@@ -60,7 +61,12 @@ class _HomePageState extends State<HomePage>
         );
       }
     });
-  
+    GetDevices().then((value) {
+      DevicesList = value;
+      setState(() {
+        isloadingdevices = false;
+      });
+    });
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         AwesomeNotifications().requestPermissionToSendNotifications();
@@ -68,268 +74,147 @@ class _HomePageState extends State<HomePage>
     });
     // shownotification();
     _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+        _connectivity.onConnectivityChanged.listen(updateConnectionStatus);
   }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    if (result == ConnectivityResult.mobile ||
-        result == ConnectivityResult.wifi) {
-      styledsnackbar(txt: "You are online now");
-    } else {
-      styledsnackbar(txt: 'You are currently offline');
-    }
-  }
-
- 
-
 
   @override
   Widget build(BuildContext context) {
-      GetDevices().then((value){
-      DevicesList = value;
-      setState(() {
-        isloadingdevices = false;
-      });
-    });
     return WillPopScope(
       onWillPop: () async {
         return onWillPop(context);
       },
-      child: Scaffold(
-        // backgroundColor: customPrimaryColor,
-        floatingActionButton: _tabController.index == 1
-            ? FloatingActionButton.extended(
-                backgroundColor: Colors.teal,
-                onPressed: () {},
-                label: customText(
-                    txt: ' File ',
-                    fsize: 18.0,
-                    // fweight: FontWeight.w300,
-                    clr: Colors.white),
-                icon: const Icon(
-                  Icons.add,
-                  size: 25.0,
-                  color: Colors.white,
-                ),
-              )
-            : null,
-        drawer: mydrawer(context: context),
-        body: DefaultTabController(
-          length: 3,
-          child: NestedScrollView(
-            headerSliverBuilder: (context, value) {
-              return [
-                SliverAppBar(
-                  title: customText(
-                      txt: 'ShareClip', fsize: 22.0, fweight: FontWeight.w500),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                  ),
-                  backgroundColor: const Color.fromARGB(255, 35, 54, 65),
-                  pinned: true,
-                  floating: true,
-                  snap: true,
-                  centerTitle: true,
-                  expandedHeight: responsiveHW(context, ht: 12),
-                  collapsedHeight: responsiveHW(context, ht: 11),
-                  flexibleSpace: const FlexibleSpaceBar(
-                    collapseMode: CollapseMode.pin,
-                  ),
-                  actions: [
-                    Padding(
-                      padding: isloadingdevices ? const EdgeInsets.all(10.0) : const EdgeInsets.all(8.0),
-                      child: 
-                      isloadingdevices ?
-                      const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
+      child: StreamBuilder<DocumentSnapshot>(
+          stream: null,
+          builder: (context, snapshot) {
+            return Scaffold(
+              // backgroundColor: customPrimaryColor,
+              floatingActionButton: _tabController.index == 1
+                  ? FloatingActionButton.extended(
+                      backgroundColor: Colors.teal,
+                      onPressed: () {},
+                      label: customText(
+                          txt: ' File ',
+                          fsize: 18.0,
+                          // fweight: FontWeight.w300,
+                          clr: Colors.white),
+                      icon: const Icon(
+                        Icons.add,
+                        size: 25.0,
+                        color: Colors.white,
+                      ),
+                    )
+                  : null,
+              drawer: mydrawer(context: context),
+              body: DefaultTabController(
+                length: 3,
+                child: NestedScrollView(
+                  headerSliverBuilder: (context, value) {
+                    return [
+                      SliverAppBar(
+                        title: customText(
+                            txt: 'ShareClip',
+                            fsize: 22.0,
+                            fweight: FontWeight.w500),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
+                          ),
                         ),
-                      )
-                      :
-                      IconButton(
-                        onPressed: () {
-                          custombottomsheet(context: context, deviceslist: DevicesList).then((value){
-                            setState(() {
-                              
-                            });
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.devices_other,
-                          size: 28.0,
-                          color: Colors.white,
+                        backgroundColor: const Color.fromARGB(255, 35, 54, 65),
+                        pinned: true,
+                        floating: true,
+                        snap: true,
+                        centerTitle: true,
+                        expandedHeight: responsiveHW(context, ht: 12),
+                        collapsedHeight: responsiveHW(context, ht: 11),
+                        flexibleSpace: const FlexibleSpaceBar(
+                          collapseMode: CollapseMode.pin,
                         ),
-                      ),
-                    ),
-                  ],
-                  bottom: TabBar(
-                    controller: _tabController,
-                    indicatorColor: Colors.blueGrey,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicatorWeight: 3.0,
-                    labelColor: Colors.teal,
-                    unselectedLabelColor:
-                        const Color.fromARGB(255, 190, 189, 192),
-                    tabs: const [
-                      Tab(
-                        text: "Clipboard",
-                        icon: Icon(FontAwesomeIcons.clipboardCheck),
-                      ),
-                      Tab(
-                        text: "Files",
-                        icon: Icon(FontAwesomeIcons.solidFileLines),
-                      ),
-                      Tab(
-                        text: "Pinned",
-                        icon: Icon(Icons.push_pin_sharp),
-                      ),
-                    ],
-                  ),
-                ),
-              ];
-            },
-            body: TabBarView(
-              controller: _tabController,
-              children: [
-                RefreshIndicator(
-                  onRefresh: () async {
-                    setState(() {});
-                  },
-                  backgroundColor: Colors.teal,
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(12.0),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
-                          tileColor: Colors.teal.withAlpha(100),
-                          // isThreeLine: true,
-                          // dense: false,
-                          subtitle: const Text(
-                            'Sync latest clipboard data across connected devices',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.white,
-                              // fontWeight: FontWeight.bold,
+                        actions: [
+                          Padding(
+                            padding: isloadingdevices
+                                ? const EdgeInsets.all(10.0)
+                                : const EdgeInsets.all(8.0),
+                            child: isloadingdevices
+                                ? const Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      custombottomsheet(
+                                              context: context,
+                                              deviceslist: DevicesList)
+                                          .then((value) {
+                                        GetDevices().then((value) {
+                                          DevicesList = value;
+                                          
+                                          setState(() {
+                                            // isloadingdevices = false;
+                                          });
+                                        });
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.devices_other,
+                                      size: 28.0,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
+                        ],
+                        bottom: TabBar(
+                          controller: _tabController,
+                          indicatorColor: Colors.blueGrey,
+                          indicatorSize: TabBarIndicatorSize.label,
+                          indicatorWeight: 3.0,
+                          labelColor: Colors.teal,
+                          unselectedLabelColor:
+                              const Color.fromARGB(255, 190, 189, 192),
+                          tabs: const [
+                            Tab(
+                              text: "Clipboard",
+                              icon: Icon(FontAwesomeIcons.clipboardCheck),
                             ),
-                          ),
-                          trailing: MaterialButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            onPressed: () {
-                              shownotification();
-                            },
-                            color: Colors.teal,
-                            child: customText(txt: 'Send', clr: Colors.white),
-                          ),
+                            Tab(
+                              text: "Files",
+                              icon: Icon(FontAwesomeIcons.solidFileLines),
+                            ),
+                            Tab(
+                              text: "Pinned",
+                              icon: Icon(Icons.push_pin_sharp),
+                            ),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: 5,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 19, right: 19, top: 13),
-                              child: Container(
-                                // height: MediaQuery.of(context).size.height * 0.2,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  color: const Color.fromARGB(255, 20, 35, 43),
-                                ),
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      // isThreeLine: true,
-                                      // dense: false,
-                                      title: const Text(
-                                        'clipboard data\nhdjsfsddsf\nasjdsja\nsgahd\nsdndjdsfds\nkjsdfj',
-                                        style: TextStyle(
-                                          fontSize: 17.0,
-                                          color: Colors.white,
-                                          // fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      trailing: customText(
-                                          txt: formattedDate,
-                                          clr: Colors.white),
-                                    ),
-                                    ListTile(
-                                      minVerticalPadding: 0.0,
-                                      leading: const Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 5.0),
-                                        child: Icon(
-                                          Icons.device_unknown,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      title: ButtonBar(
-                                        alignment: MainAxisAlignment.end,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            // splashColor: Colors.white,
-                                            onPressed: () {},
-                                            icon: const Icon(
-                                              Icons.copy_outlined,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: const Icon(
-                                              Icons.push_pin_outlined,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                    ];
+                  },
+                  body: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      RefreshIndicator(
+                          child: tab1view(
+                              context: context,
+                              titletxt:
+                                  'clipboard data\nhdjsfsddsf\nasjdsja\nsgahd\nsdndjdsfds\nkjsdfj',
+                              trailingtxt: formattedDate),
+                          backgroundColor: Colors.white,
+                          color: Colors.teal,
+                          onRefresh: () async {
+                            setState(() {});
+                          }),
+                      // 2nd tab
+                      tab2view(context: context),
+                      // 3rd tab
+                      tab3view(context: context),
                     ],
                   ),
                 ),
-                // 2nd tab
-                const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                ),
-                // 3rd tab
-                const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+            );
+          }),
     );
   }
 }
