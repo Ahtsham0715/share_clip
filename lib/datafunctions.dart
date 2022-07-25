@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,14 @@ var getclipboard = Clipboard.getData(Clipboard.kTextPlain);
 void setclipboard(data) {
   Clipboard.setData(ClipboardData(text: data));
 }
+
+  Future readdeviceinfo() async {
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    final deviceInfo = await deviceInfoPlugin.deviceInfo;
+    final devicedata = deviceInfo.toMap();
+    // print(devicedata);
+    return devicedata;
+  }
 
 Future SyncData() async {}
 
@@ -65,8 +74,7 @@ Future editDeviceName({required updatedName, required deviceid}) async {
           .set({
         'devices':updateddeviceslist,
       }, SetOptions(merge: true));
-      Get.back();
-      Get.back();
+      
     } on FirebaseException catch (e) {
       customtoast('unable to edit device name');
     } on PlatformException catch(e){

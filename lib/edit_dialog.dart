@@ -129,16 +129,20 @@ Future custombottomsheet({required context, required deviceslist}) async {
                                       context: context,
                                     ), () {
                                   if (_formkey.currentState!.validate()) {
-                                    customdialogcircularprogressindicator('Saving... ');
+                                    Get.back();
+                                    Get.back();
+                                    customdialogcircularprogressindicator(
+                                        'Saving... ');
                                     editDeviceName(
-                                        updatedName:
-                                            devicecontroller.text.trim(),
-                                        deviceid: deviceslist[index]
-                                                ['device_id']
-                                            .toString()).then((value){
-                                              Get.back();
-                                          // statesetter;
-                                            });
+                                            updatedName:
+                                                devicecontroller.text.trim(),
+                                            deviceid: deviceslist[index]
+                                                    ['device_id']
+                                                .toString())
+                                        .then((value) {
+                                      Get.back();
+                                      // statesetter;
+                                    });
                                   }
                                 }, 'SUBMIT', context: context);
                               });
