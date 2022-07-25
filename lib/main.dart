@@ -12,8 +12,16 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  notificationListener();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  AwesomeNotifications().initialize(
+  runApp(const MyApp());
+}
+
+  Future notificationListener() async {
+    AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
       'resource://drawable/app_icon',
       // null,
@@ -40,28 +48,22 @@ void main() async {
             channelGroupName: 'Basic group')
       ],
       debug: true);
+     AwesomeNotifications()
+        .actionStream
+        .listen((ReceivedAction receivedAction) {
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  runApp(const MyApp());
-}
+      if(receivedAction.buttonKeyPressed == 'sendbtn'){
+        print('send button pressed');
+      }
+    });
+  }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // AwesomeNotifications()
-    //     .actionStream
-    //     .listen((ReceivedNotification receivedNotification) {
-    //   // Navigator.of(context).pushNamed('/NotificationPage', arguments: {
-    //   //   // your page params. I recommend you to pass the
-    //   //   // entire *receivedNotification* object
-    //   //   receivedNotification.id
-    //   // });
-    // });
+   
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(

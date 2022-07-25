@@ -40,8 +40,8 @@ class _SigninPageState extends State<SigninPage> {
     });
     try {
       await FirebaseFirestore.instance
-          .collection(FirebaseAuth.instance.currentUser!.uid)
-          .doc('connected_devices')
+          .collection('connected_devices')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .set({
         'devices': FieldValue.arrayUnion([
           {

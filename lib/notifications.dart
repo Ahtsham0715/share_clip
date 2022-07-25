@@ -36,7 +36,7 @@ Future shownotification() async {
           color: const Color.fromARGB(255, 2, 165, 149),
           enabled: true,
           // showInCompactView: false,
-          icon: 'resource://drawable/google.png',
+          // icon: 'resource://drawable/google.png',
         )
       ]);
 }

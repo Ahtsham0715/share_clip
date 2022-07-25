@@ -97,8 +97,8 @@ class _HomePageState extends State<HomePage>
     var thisdevice;
     readdeviceinfo().then((value) => thisdevice = value);
     await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.uid)
-        .doc('connected_devices')
+          .collection('connected_devices')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((DocumentSnapshot mydevices) {
       if (mydevices.exists) {
@@ -115,8 +115,8 @@ class _HomePageState extends State<HomePage>
     });
     try {
       await FirebaseFirestore.instance
-          .collection(FirebaseAuth.instance.currentUser!.uid)
-          .doc('connected_devices')
+          .collection('connected_devices')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .set({
         'devices': updateddeviceslist,
       }, SetOptions(merge: true));
