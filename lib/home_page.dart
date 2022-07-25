@@ -99,13 +99,13 @@ class _HomePageState extends State<HomePage>
                 child: Text('No Data Available'),
               );
             }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.teal,
-                ),
-              );
-            }
+            // if (snapshot.connectionState == ConnectionState.waiting) {
+            //   return const Center(
+            //     child: CircularProgressIndicator(
+            //       color: Colors.teal,
+            //     ),
+            //   );
+            // }
             if (snapshot.data!.exists) {
               return Center(
                 child: Column(
