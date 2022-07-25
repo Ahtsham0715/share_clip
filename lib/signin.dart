@@ -92,7 +92,7 @@ class _SigninPageState extends State<SigninPage> {
         isworking = false;
       });
     } on PlatformException catch(e){
-      customtoast('Error Occured. Try again');
+      customtoast('Error Occured. Try again $e');
       setState(() {
         isworking = false;
       });

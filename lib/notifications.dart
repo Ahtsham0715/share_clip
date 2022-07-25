@@ -18,6 +18,7 @@ Future shownotification() async {
           displayOnBackground: true,
           displayOnForeground: true,
           locked: true,
+          // icon: '@mipmap/ic_icon',
           // largeIcon: 'asset://assets/images/splash.png',
           // roundedLargeIcon: true,
           // bigPicture: 'asset://assets/images/google.png',
