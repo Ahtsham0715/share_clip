@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_clip/custom%20widgets/custom_toast.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
@@ -56,7 +56,9 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   Future signInWithGoogle() async {
-    // Trigger the authentication flow
+    
+    try {
+      // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     // Obtain the auth details from the request
@@ -68,7 +70,6 @@ class _SigninPageState extends State<SigninPage> {
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-    try {
       await FirebaseAuth.instance.signInWithCredential(credential);
       await setdeviceinfo();
       setState(() {
@@ -80,8 +81,18 @@ class _SigninPageState extends State<SigninPage> {
         transition: Transition.rightToLeftWithFade,
         duration: const Duration(seconds: 1),
       );
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       customtoast('Unable to login');
+      setState(() {
+        isworking = false;
+      });
+    } on FirebaseException catch(e){
+      customtoast('Error Occured');
+      setState(() {
+        isworking = false;
+      });
+    } on PlatformException catch(e){
+      customtoast('Error Occured. Try again');
       setState(() {
         isworking = false;
       });
