@@ -86,6 +86,22 @@ Future pintoggle({required docid, required ispinned}) async {
   }
  
 }
+Future deletedata({required docid}) async {
+  customdialogcircularprogressindicator('Deleting... ');
+  try{
+     await  dbref
+            .collection('clipboarddata')
+            .doc(currentuser!.uid)
+            .collection('userclipdata')
+            .doc(docid)
+            .delete();
+            Get.back();
+  }on FirebaseException catch(e){
+    print('error occured .$e');
+            Get.back();
+  }
+ 
+}
 
 Future GetDevices() async {
   List connectedDevices = [];
