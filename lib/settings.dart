@@ -1,6 +1,8 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/datafunctions.dart';
+import 'package:share_clip/notifications.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -46,6 +48,30 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {
                   // autosync = val;
                   box.write('autosync', val);
+                });
+              },
+            ),
+            customdivider(thick: 1.0),
+            SwitchListTile(
+              title: customText(
+                txt: 'Notification',
+                fsize: 18.0,
+                fweight: FontWeight.w500,
+              ),
+              secondary: const Icon(
+                Icons.notifications_active,
+                color: Colors.white,
+              ),
+              value: box.read('notification'),
+              onChanged: (val) {
+                setState(() {
+                  // autosync = val;
+                  if(val){
+                    shownotification();
+                  }else{
+                    AwesomeNotifications().cancelAll();
+                  }
+                  box.write('notification', val);
                 });
               },
             ),
