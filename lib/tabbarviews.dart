@@ -46,7 +46,7 @@ Widget tab1view({required context, required datalist}) {
           ? Expanded(
               child: Center(
                 child: customText(
-                  txt: 'No Unpinned Data',
+                  txt: 'No Clipboard Data',
                   fsize: 22.0,
                   fweight: FontWeight.w500,
                   clr: Colors.white,

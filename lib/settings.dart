@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
+import 'package:share_clip/datafunctions.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -9,7 +10,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool autosync = false;
+  // bool autosync = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,10 +41,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 Icons.sync,
                 color: Colors.white,
               ),
-              value: autosync,
+              value: box.read('autosync'),
               onChanged: (val) {
                 setState(() {
-                  autosync = val;
+                  // autosync = val;
+                  box.write('autosync', val);
                 });
               },
             ),
@@ -58,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 text: const TextSpan(children: [
                   TextSpan(
                     text:
-                        "Share Clip creates a link between all of your connected devices to increase productivity. Safely send text, photos, and data over the cloud. It's as easy as copy on one device and paste on another, working completely in the background.\n\nStop having to email yourself and increase your digital efficiency across multiple devices with Clipt.",
+                        "ShareClip creates a link between all of your connected devices to increase productivity. Safely send text, photos, and data over the cloud. It's as easy as copy on one device and paste on another, working completely in the background.\n\nStop having to email yourself and increase your digital efficiency across multiple devices with Clipt.",
                     style: TextStyle(
                       fontSize: 19.0,
                       fontWeight: FontWeight.w400,

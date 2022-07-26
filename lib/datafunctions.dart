@@ -4,12 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:share_clip/custom%20widgets/custom_toast.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 
 var dbref = FirebaseFirestore.instance;
 var currentuser = FirebaseAuth.instance.currentUser;
+final box = GetStorage();
 
 void setclipboard(data) {
   Clipboard.setData(ClipboardData(text: data)).then((value){
