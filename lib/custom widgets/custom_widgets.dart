@@ -100,6 +100,7 @@ Future<void> customdialogcircularprogressindicator(txt) async {
     WillPopScope(
       onWillPop: () async => false,
       child: AlertDialog(
+        backgroundColor: customPrimaryColor,
         // title: _title,
         title: Row(
           // mainAxisSize: MainAxisSize.min,

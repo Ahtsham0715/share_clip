@@ -30,7 +30,7 @@ Future shownotification() async {
       actionButtons: [
         NotificationActionButton(
           key: 'sendbtn',
-          label: 'Send',
+          label: 'Sync',
           autoDismissible: false,
           buttonType: ActionButtonType.Default,
           color: const Color.fromARGB(255, 2, 165, 149),

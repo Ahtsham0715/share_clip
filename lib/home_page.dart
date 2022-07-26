@@ -84,189 +84,244 @@ class _HomePageState extends State<HomePage>
         return onWillPop(context);
       },
       child: Scaffold(
-              // backgroundColor: customPrimaryColor,
-              floatingActionButton: _tabController.index == 1
-                  ? FloatingActionButton.extended(
-                      backgroundColor: Colors.teal,
-                      onPressed: () {},
-                      label: customText(
-                          txt: ' File ',
-                          fsize: 18.0,
-                          // fweight: FontWeight.w300,
-                          clr: Colors.white),
-                      icon: const Icon(
-                        Icons.add,
-                        size: 25.0,
-                        color: Colors.white,
-                      ),
-                    )
-                  : null,
-              drawer: mydrawer(context: context),
-              body: DefaultTabController(
-                length: 3,
-                child: NestedScrollView(
-                  headerSliverBuilder: (context, value) {
-                    return [
-                      SliverAppBar(
-                        title: customText(
-                            txt: 'ShareClip',
-                            fsize: 22.0,
-                            fweight: FontWeight.w500),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
-                          ),
-                        ),
-                        backgroundColor: const Color.fromARGB(255, 35, 54, 65),
-                        pinned: true,
-                        floating: true,
-                        snap: true,
-                        centerTitle: true,
-                        expandedHeight: responsiveHW(context, ht: 12),
-                        collapsedHeight: responsiveHW(context, ht: 11),
-                        flexibleSpace: const FlexibleSpaceBar(
-                          collapseMode: CollapseMode.pin,
-                        ),
-                        actions: [
-                          Padding(
-                            padding: isloadingdevices
-                                ? const EdgeInsets.all(10.0)
-                                : const EdgeInsets.all(8.0),
-                            child: isloadingdevices
-                                ? const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : IconButton(
-                                    onPressed: () {
-                                      custombottomsheet(
-                                              context: context,
-                                              deviceslist: DevicesList)
-                                          .then((value) {
-                                        GetDevices().then((value) {
-                                          DevicesList = value;
-                                          
-                                          setState(() {
-                                            // isloadingdevices = false;
-                                          });
-                                        });
-                                      });
-                                    },
-                                    icon: const Icon(
-                                      Icons.devices_other,
-                                      size: 28.0,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                          ),
-                        ],
-                        bottom: TabBar(
-                          controller: _tabController,
-                          indicatorColor: Colors.blueGrey,
-                          indicatorSize: TabBarIndicatorSize.label,
-                          indicatorWeight: 3.0,
-                          labelColor: Colors.teal,
-                          unselectedLabelColor:
-                              const Color.fromARGB(255, 190, 189, 192),
-                          tabs: const [
-                            Tab(
-                              text: "Clipboard",
-                              icon: Icon(FontAwesomeIcons.clipboardCheck),
-                            ),
-                            Tab(
-                              text: "Files",
-                              icon: Icon(FontAwesomeIcons.solidFileLines),
-                            ),
-                            Tab(
-                              text: "Pinned",
-                              icon: Icon(Icons.push_pin_sharp),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ];
-                  },
-                  body: StreamBuilder<DocumentSnapshot>(
-                    stream: dbref.collection('clipboarddata').doc(currentuser!.uid).snapshots(),
-                    builder: (context, snapshot) {
-                       var data = snapshot.data!;
-                       List clipdata = data['data'];
-            if (snapshot.hasError) {
-              // print(snapshot.error);
-              return const Center(
-                child: Text('Something Went Wrong'),
-              );
-            }
-            if (!snapshot.hasData) {
-              // print(snapshot.error);
-              return const Center(
-                child: Text('No Data Available'),
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.teal,
+        // backgroundColor: customPrimaryColor,
+        floatingActionButton: _tabController.index == 1
+            ? FloatingActionButton.extended(
+                backgroundColor: Colors.teal,
+                onPressed: () {},
+                label: customText(
+                    txt: ' File ',
+                    fsize: 18.0,
+                    // fweight: FontWeight.w300,
+                    clr: Colors.white),
+                icon: const Icon(
+                  Icons.add,
+                  size: 25.0,
+                  color: Colors.white,
                 ),
-              );
-            }
-            if (!snapshot.data!.exists || clipdata.isEmpty){
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.hourglass_empty,
-                      size: 50.0,
+              )
+            : null,
+        drawer: mydrawer(context: context),
+        body: DefaultTabController(
+          length: 3,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, value) {
+              return [
+                SliverAppBar(
+                  title: customText(
+                      txt: 'ShareClip', fsize: 22.0, fweight: FontWeight.w500),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      'No Data Available',
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold,
-                        // color: Colors.black,
-                      ),
+                  ),
+                  backgroundColor: const Color.fromARGB(255, 35, 54, 65),
+                  pinned: true,
+                  floating: true,
+                  snap: true,
+                  centerTitle: true,
+                  expandedHeight: responsiveHW(context, ht: 12),
+                  collapsedHeight: responsiveHW(context, ht: 11),
+                  flexibleSpace: const FlexibleSpaceBar(
+                    collapseMode: CollapseMode.pin,
+                  ),
+                  actions: [
+                    Padding(
+                      padding: isloadingdevices
+                          ? const EdgeInsets.all(10.0)
+                          : const EdgeInsets.all(8.0),
+                      child: isloadingdevices
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: () {
+                                custombottomsheet(
+                                        context: context,
+                                        deviceslist: DevicesList)
+                                    .then((value) {
+                                  GetDevices().then((value) {
+                                    DevicesList = value;
+
+                                    setState(() {
+                                      // isloadingdevices = false;
+                                    });
+                                  });
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.devices_other,
+                                size: 28.0,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ],
-                ),
-              );
-            }
-            
-            else{
-              print(clipdata);
-              return TabBarView(
-                        controller: _tabController,
-                        children: [
-                          RefreshIndicator(
-                              child: tab1view(
-                                  context: context,
-                                   datalist: clipdata),
-                              backgroundColor: Colors.white,
-                              color: Colors.teal,
-                              onRefresh: () async {
-                                setState(() {});
-                              }),
-                          // 2nd tab
-                          tab2view(context: context),
-                          // 3rd tab
-                          tab3view(context: context),
-                        ],
-                      );
-                      
-            }
-                      
-                    }
+                  bottom: TabBar(
+                    controller: _tabController,
+                    indicatorColor: Colors.blueGrey,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    indicatorWeight: 3.0,
+                    labelColor: Colors.teal,
+                    unselectedLabelColor:
+                        const Color.fromARGB(255, 190, 189, 192),
+                    tabs: const [
+                      Tab(
+                        text: "Clipboard",
+                        icon: Icon(FontAwesomeIcons.clipboardCheck),
+                      ),
+                      Tab(
+                        text: "Files",
+                        icon: Icon(FontAwesomeIcons.solidFileLines),
+                      ),
+                      Tab(
+                        text: "Pinned",
+                        icon: Icon(Icons.push_pin_sharp),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ),
+              ];
+            },
+            body: StreamBuilder<QuerySnapshot>(
+                stream: dbref
+                    .collection('clipboarddata')
+                    .doc(currentuser!.uid)
+                    .collection('userclipdata')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  var data = snapshot.data!.docs;
+                  var unpinnedlist = data.where((element) {
+                    return element
+                        .get('isPinned')
+                        .toString()
+                        .toLowerCase()
+                        .contains('false');
+                  }).toList();
+                  var pinnedlist = data.where((element) {
+                    return element
+                        .get('isPinned')
+                        .toString()
+                        .toLowerCase()
+                        .contains('true');
+                  }).toList();
+                  if (snapshot.hasError) {
+                    // print(snapshot.error);
+                    return const Center(
+                      child: Text('Something Went Wrong'),
+                    );
+                  }
+                  if (!snapshot.hasData) {
+                    // print(snapshot.error);
+                    return const Center(
+                      child: Text('No Data Available'),
+                    );
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.teal,
+                      ),
+                    );
+                  }
+                  if (data.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                         
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                           _tabController.index == 0
+                          ?
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.all(12.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              tileColor: Colors.teal.withAlpha(100),
+                              // isThreeLine: true,
+                              // dense: false,
+                              subtitle: const Text(
+                                'Sync latest clipboard data across connected devices',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.white,
+                                  // fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: MaterialButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                onPressed: () {
+                                  // shownotification();
+                                  SyncData();
+                                },
+                                color: Colors.teal,
+                                child:
+                                    customText(txt: 'Sync', clr: Colors.white),
+                              ),
+                            ),
+                          )
+                          :
+                          Center(),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.25,
+                          ),
+                          Icon(
+                            Icons.hourglass_empty,
+                            size: 50.0,
+                          ),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            'No Data Available',
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold,
+                              // color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } 
+                  else {
+                    return TabBarView(
+                      controller: _tabController,
+                      children: [
+                        RefreshIndicator(
+                            child: tab1view(
+                                context: context, datalist: unpinnedlist),
+                            backgroundColor: Colors.white,
+                            color: Colors.teal,
+                            onRefresh: () async {
+                              setState(() {});
+                            }),
+                        // 2nd tab
+                        tab2view(context: context),
+                        // 3rd tab
+                        RefreshIndicator(
+                          child:
+                              tab3view(context: context, datalist: pinnedlist),
+                          onRefresh: () async {
+                            setState(() {});
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                }),
+          ),
+        ),
+      ),
     );
   }
 }
-
-
