@@ -72,7 +72,6 @@ class _HomePageState extends State<HomePage>
         AwesomeNotifications().requestPermissionToSendNotifications();
       }
     });
-    // shownotification();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(updateConnectionStatus);
   }

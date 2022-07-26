@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 
 Future shownotification() async {
-  AwesomeNotifications().cancelAll();
-
+  // AwesomeNotifications().cancelAll();
   AwesomeNotifications().createNotification(
       content: NotificationContent(
           notificationLayout: NotificationLayout.Default,
+          fullScreenIntent: false,
+          wakeUpScreen: false,
           payload: {'sendbtn': 'Send'},
           backgroundColor: customPrimaryColor,
           category: NotificationCategory.Service,
@@ -35,7 +36,7 @@ Future shownotification() async {
           buttonType: ActionButtonType.Default,
           color: const Color.fromARGB(255, 2, 165, 149),
           enabled: true,
-          // showInCompactView: false,
+          showInCompactView: true,
           // icon: 'resource://drawable/google.png',
         )
       ]);

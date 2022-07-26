@@ -20,7 +20,6 @@ void main() async {
   );
   await GetStorage.init();
   box.writeIfNull('autosync', false);
-   shownotification();
   runApp(const MyApp());
 }
 
@@ -51,15 +50,18 @@ void main() async {
             channelGroupkey: 'basic_channel_group',
             channelGroupName: 'Basic group')
       ],
-      debug: true);
+      );
      AwesomeNotifications()
         .actionStream
         .listen((ReceivedAction receivedAction) {
-
+          if(receivedAction.id != 1){
+            print('notification not found');
+            shownotification();
+          }
       if(receivedAction.buttonKeyPressed == 'sendbtn'){
         print('send button pressed');
         SyncData().then((value){
-          Get.back();
+          // Get.back();
         });
       }
     });
