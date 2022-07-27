@@ -308,6 +308,8 @@ class _HomePageState extends State<HomePage>
                         tab2view(context: context),
                         // 3rd tab
                         RefreshIndicator(
+                           backgroundColor: Colors.white,
+                            color: Colors.teal,
                           child:
                               tab3view(context: context, datalist: pinnedlist),
                           onRefresh: () async {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +28,31 @@ Future readdeviceinfo() async {
   final devicedata = deviceInfo.toMap();
   // print(devicedata);
   return devicedata;
+}
+
+Future autosync() async {
+final clipboardContentStream = StreamController<String>.broadcast();
+
+Timer clipboardTriggerTime;
+
+clipboardTriggerTime = Timer.periodic(
+      const Duration(seconds: 5),
+      (timer) {
+        Clipboard.getData('text/plain').then((clipboarContent) {
+          print('Clipboard content ${clipboarContent?.text}');
+
+          clipboardContentStream.add('${clipboarContent?.text}');
+        });
+      },
+    );
+
+
+// @override
+// void dispose() {
+//   clipboardContentStream.close();
+
+//   clipboardTriggerTime.cancel();
+// }
 }
 
 Future SyncData() async {
