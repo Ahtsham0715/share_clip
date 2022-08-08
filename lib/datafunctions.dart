@@ -81,6 +81,7 @@ customdialogcircularprogressindicator('Syncing Data... ');
           'date': formattedDate,
           'clipboard_data': getclipboard!.text,
         }, SetOptions(merge: true));
+        setclipboard(getclipboard.text);
         Get.back();
       } on FirebaseException catch (e) {
         print('error occured .$e');
