@@ -14,7 +14,12 @@ import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 var dbref = FirebaseFirestore.instance;
 var currentuser = FirebaseAuth.instance.currentUser;
 final box = GetStorage();
+var previousclipdata;
 
+var getclipboard = Clipboard.getData('text/plain').then((value){
+  previousclipdata = value!.text;
+});
+Timer? timer;
 void setclipboard(data) {
   Clipboard.setData(ClipboardData(text: data)).then((value){
       styledsnackbar(txt: 'Copied to clipboard', icon: Icons.copy);
@@ -31,28 +36,16 @@ Future readdeviceinfo() async {
 }
 
 Future autosync() async {
-final clipboardContentStream = StreamController<String>.broadcast();
 
-Timer clipboardTriggerTime;
+print(previousclipdata);
+timer = Timer.periodic(Duration(seconds: 2), (timer) async {
+     var getclipboard = await Clipboard.getData('text/plain');
+     if(previousclipdata != getclipboard!.text){
+      previousclipdata = getclipboard.text;
+      SyncData();
+     }
+    });
 
-clipboardTriggerTime = Timer.periodic(
-      const Duration(seconds: 5),
-      (timer) {
-        Clipboard.getData('text/plain').then((clipboarContent) {
-          print('Clipboard content ${clipboarContent?.text}');
-
-          clipboardContentStream.add('${clipboarContent?.text}');
-        });
-      },
-    );
-
-
-// @override
-// void dispose() {
-//   clipboardContentStream.close();
-
-//   clipboardTriggerTime.cancel();
-// }
 }
 
 Future SyncData() async {

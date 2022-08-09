@@ -47,7 +47,17 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (val) {
                 setState(() {
                   // autosync = val;
+
                   box.write('autosync', val);
+                  if (!val) {
+                    @override
+                    void dispose() {
+                      timer?.cancel();
+                      super.dispose();
+                    }
+                  }else{
+                    autosync();
+                  }
                 });
               },
             ),
@@ -66,9 +76,9 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (val) {
                 setState(() {
                   // autosync = val;
-                  if(val){
+                  if (val) {
                     shownotification();
-                  }else{
+                  } else {
                     AwesomeNotifications().cancelAll();
                   }
                   box.write('notification', val);

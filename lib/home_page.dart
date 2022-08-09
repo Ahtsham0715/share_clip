@@ -61,6 +61,9 @@ class _HomePageState extends State<HomePage>
         );
       }
     });
+    if(box.read('autosync')){
+      autosync();
+    }
     GetDevices().then((value) {
       DevicesList = value;
       setState(() {
