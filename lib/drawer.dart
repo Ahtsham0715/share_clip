@@ -43,7 +43,6 @@ import 'package:share_clip/settings.dart';
     }
   }
 
-
 Widget mydrawer({required context}) {
   return Drawer(
           backgroundColor: customPrimaryColor,
