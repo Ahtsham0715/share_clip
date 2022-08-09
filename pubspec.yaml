@@ -47,6 +47,7 @@ dependencies:
   device_info_plus: any
   get_storage: any
   awesome_notifications: any
+  url_launcher: any
 
 dev_dependencies:
   flutter_test:

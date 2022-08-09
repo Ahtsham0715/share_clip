@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/datafunctions.dart';
 import 'package:share_clip/notifications.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -111,7 +112,24 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             customdivider(thick: 1.0),
             ListTile(
-              onTap: () {},
+              onTap: () async {
+                String? encodeQueryParameters(Map<String, String> params) {
+                  return params.entries
+                      .map((e) =>
+                          '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                      .join('&');
+                }
+
+                final Uri emailLaunchUri = Uri(
+                    scheme: 'mailto',
+                    path: 'ahtsham50743@gmail.com',
+                    query: encodeQueryParameters(<String, String>{
+                      'subject': '',
+                      'body': '',
+                    }));
+
+                await launchUrl(emailLaunchUri);
+              },
               title: customText(
                 txt: 'Contact us',
                 fsize: 18.0,
@@ -131,17 +149,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     contenttext: 'Do you want to delete this account?',
                     yesOnTap: () async {
                       Navigator.pop(context);
-                      try{
+                      try {
                         customdialogcircularprogressindicator('Deleting... ');
-                      await currentuser?.delete();
-                      Navigator.pop(context);
-                      styledsnackbar(txt: 'User Deleted Successfully', icon: Icons.delete_forever_rounded);
+                        await currentuser?.delete();
+                        Navigator.pop(context);
+                        styledsnackbar(
+                            txt: 'User Deleted Successfully',
+                            icon: Icons.delete_forever_rounded);
+                      } on FirebaseAuthException catch (e) {
+                        Navigator.pop(context);
+                        styledsnackbar(
+                            txt: 'Error occured!. Try again.',
+                            icon: Icons.sms_failed_outlined);
                       }
-                      on FirebaseAuthException catch(e){
-                      Navigator.pop(context);
-                      styledsnackbar(txt: 'Error occured!. Try again.', icon: Icons.sms_failed_outlined);
-                      }
-                      
                     });
               },
               title: customText(
