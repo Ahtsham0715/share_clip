@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Flutter Web (port 53032)",
+            "request": "launch",
+            "type": "dart",
+            "args": ["--web-port", "53032"]
+        }
+    ]
+}
