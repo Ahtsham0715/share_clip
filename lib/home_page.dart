@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage>
                                     borderRadius: BorderRadius.circular(5.0)),
                                 onPressed: () {
                                   // shownotification();
-                                  SyncData();
+                                  SyncData(isautosync: false);
                                 },
                                 color: Colors.teal,
                                 child:

@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/datafunctions.dart';
@@ -55,7 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       timer?.cancel();
                       super.dispose();
                     }
-                  }else{
+                  } else {
                     autosync();
                   }
                 });
@@ -123,7 +124,26 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             customdivider(thick: 1.0),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                customYesNoDialog(
+                    ctx: context,
+                    titletext: 'Are You Sure?',
+                    contenttext: 'Do you want to delete this account?',
+                    yesOnTap: () async {
+                      Navigator.pop(context);
+                      try{
+                        customdialogcircularprogressindicator('Deleting... ');
+                      await currentuser?.delete();
+                      Navigator.pop(context);
+                      styledsnackbar(txt: 'User Deleted Successfully', icon: Icons.delete_forever_rounded);
+                      }
+                      on FirebaseAuthException catch(e){
+                      Navigator.pop(context);
+                      styledsnackbar(txt: 'Error occured!. Try again.', icon: Icons.sms_failed_outlined);
+                      }
+                      
+                    });
+              },
               title: customText(
                 txt: 'Delete Account',
                 fsize: 18.0,

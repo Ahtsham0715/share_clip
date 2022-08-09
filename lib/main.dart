@@ -58,7 +58,7 @@ void main() async {
         .listen((ReceivedAction receivedAction) {
       if(receivedAction.buttonKeyPressed == 'sendbtn'){
         print('send button pressed');
-        SyncData().then((value){
+        SyncData(isautosync:true).then((value){
           // Get.back();
         });
       }

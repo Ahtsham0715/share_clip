@@ -42,14 +42,15 @@ timer = Timer.periodic(Duration(seconds: 2), (timer) async {
      var getclipboard = await Clipboard.getData('text/plain');
      if(previousclipdata != getclipboard!.text){
       previousclipdata = getclipboard.text;
-      SyncData();
+      SyncData(isautosync: true);
      }
     });
 
 }
 
-Future SyncData() async {
-customdialogcircularprogressindicator('Syncing Data... ');
+Future SyncData({required isautosync}) async {
+  !isautosync?
+customdialogcircularprogressindicator('Syncing Data... '): null;
   DateTime now = DateTime.now();
   var formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
   var getclipboard = await Clipboard.getData('text/plain');
@@ -75,16 +76,22 @@ customdialogcircularprogressindicator('Syncing Data... ');
           'clipboard_data': getclipboard!.text,
         }, SetOptions(merge: true));
         setclipboard(getclipboard.text);
-        Get.back();
+        !isautosync ? Get.back(): null;
       } on FirebaseException catch (e) {
         print('error occured .$e');
-        Get.back();
+        if(!isautosync){
+           Get.back();
       styledsnackbar(txt: 'Data Sync Failed', icon: Icons.sms_failed_outlined);
+        }
+       
 
       }
     }else{
+      if(!isautosync){
         Get.back();
       styledsnackbar(txt: 'Data Already Found', icon: Icons.sms_failed_outlined);
+      }
+        
     }
   });
 }

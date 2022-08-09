@@ -35,7 +35,7 @@ Widget tab1view({required context, required datalist}) {
                 borderRadius: BorderRadius.circular(5.0)),
             onPressed: () {
               // shownotification();
-              SyncData();
+              SyncData(isautosync: false);
             },
             color: Colors.teal,
             child: customText(txt: 'Sync', clr: Colors.white),
