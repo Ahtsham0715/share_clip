@@ -10,10 +10,12 @@
     "name": "ShareClip",
     "version": "1.0",
     "description": "Share clip chrome extension for usage on web and desktop to share clipboard data and other files.",
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-    "browser_action": {
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+      },
+    "action": {
     "default_popup": "index.html",
     "default_icon": "app_icon.png"
     },
-    "manifest_version": 2
+    "manifest_version": 3
 }
