@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -16,14 +18,13 @@ var currentuser = FirebaseAuth.instance.currentUser;
 final box = GetStorage();
 var previousclipdata;
 
-var getclipboard = Clipboard.getData('text/plain').then((value){
+var getclipboard = Clipboard.getData('text/plain').then((value) {
   previousclipdata = value!.text;
 });
 Timer? timer;
 void setclipboard(data) {
-  Clipboard.setData(ClipboardData(text: data)).then((value){
-      styledsnackbar(txt: 'Copied to clipboard', icon: Icons.copy);
-
+  Clipboard.setData(ClipboardData(text: data)).then((value) {
+    styledsnackbar(txt: 'Copied to clipboard', icon: Icons.copy);
   });
 }
 
@@ -36,21 +37,20 @@ Future readdeviceinfo() async {
 }
 
 Future autosync() async {
-
-print(previousclipdata);
-timer = Timer.periodic(Duration(seconds: 2), (timer) async {
-     var getclipboard = await Clipboard.getData('text/plain');
-     if(previousclipdata != getclipboard!.text){
+  print(previousclipdata);
+  timer = Timer.periodic(Duration(seconds: 2), (timer) async {
+    var getclipboard = await Clipboard.getData('text/plain');
+    if (previousclipdata != getclipboard!.text) {
       previousclipdata = getclipboard.text;
       SyncData(isautosync: true);
-     }
-    });
-
+    }
+  });
 }
 
 Future SyncData({required isautosync}) async {
-  !isautosync?
-customdialogcircularprogressindicator('Syncing Data... '): null;
+  !isautosync
+      ? customdialogcircularprogressindicator('Syncing Data... ')
+      : null;
   DateTime now = DateTime.now();
   var formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
   var getclipboard = await Clipboard.getData('text/plain');
@@ -76,22 +76,21 @@ customdialogcircularprogressindicator('Syncing Data... '): null;
           'clipboard_data': getclipboard!.text,
         }, SetOptions(merge: true));
         setclipboard(getclipboard.text);
-        !isautosync ? Get.back(): null;
+        !isautosync ? Get.back() : null;
       } on FirebaseException catch (e) {
         print('error occured .$e');
-        if(!isautosync){
-           Get.back();
-      styledsnackbar(txt: 'Data Sync Failed', icon: Icons.sms_failed_outlined);
+        if (!isautosync) {
+          Get.back();
+          styledsnackbar(
+              txt: 'Data Sync Failed', icon: Icons.sms_failed_outlined);
         }
-       
-
       }
-    }else{
-      if(!isautosync){
+    } else {
+      if (!isautosync) {
         Get.back();
-      styledsnackbar(txt: 'Data Already Found', icon: Icons.sms_failed_outlined);
+        styledsnackbar(
+            txt: 'Data Already Found', icon: Icons.sms_failed_outlined);
       }
-        
     }
   });
 }
@@ -100,38 +99,38 @@ Future pintoggle({required docid, required ispinned}) async {
   // ispinned ?
   // customdialogcircularprogressindicator('Pinning... '):
   // customdialogcircularprogressindicator('UnPinning... ');
-  try{
-     await  dbref
-            .collection('clipboarddata')
-            .doc(currentuser!.uid)
-            .collection('userclipdata')
-            .doc(docid)
-            .set({
-              'isPinned': ispinned,
-            }, SetOptions(merge: true));
-            // Get.back();
-  }on FirebaseException catch(e){
+  try {
+    await dbref
+        .collection('clipboarddata')
+        .doc(currentuser!.uid)
+        .collection('userclipdata')
+        .doc(docid)
+        .set({
+      'isPinned': ispinned,
+    }, SetOptions(merge: true));
+    // Get.back();
+  } on FirebaseException catch (e) {
     print('error occured .$e');
-            // Get.back();
+    // Get.back();
   }
- 
 }
+
 Future deletedata({required docid}) async {
   customdialogcircularprogressindicator('Deleting... ');
-  try{
-     await  dbref
-            .collection('clipboarddata')
-            .doc(currentuser!.uid)
-            .collection('userclipdata')
-            .doc(docid)
-            .delete();
-            Get.back();
-  }on FirebaseException catch(e){
+  try {
+    await dbref
+        .collection('clipboarddata')
+        .doc(currentuser!.uid)
+        .collection('userclipdata')
+        .doc(docid)
+        .delete();
+    Get.back();
+  } on FirebaseException catch (e) {
     print('error occured .$e');
-            Get.back();
+    Get.back();
   }
- 
 }
+
 
 Future GetDevices() async {
   List connectedDevices = [];
@@ -184,5 +183,68 @@ Future editDeviceName({required updatedName, required deviceid}) async {
     customtoast('unable to edit device name');
   } on PlatformException catch (e) {
     customtoast('unable to edit device name');
+  }
+}
+
+Future<void> uploadFile(String filePath) async {
+    customdialogcircularprogressindicator('Uploading... ');
+    File file = File(filePath);
+    var filename = filePath.toString().split('/').last;
+    try {
+      await FirebaseStorage.instance
+          .ref('${currentuser!.uid}/${filename}')
+          .putFile(file);
+          downloadURLfunc(filename);
+    } on FirebaseException catch (e) {
+      Get.snackbar('Error occured while uploading the file', '$e');
+    }
+  }
+
+  Future<void> downloadURLfunc(fname) async {
+    try{
+      String fileurl = await FirebaseStorage.instance
+        .ref('${currentuser!.uid}/${fname}')
+        .getDownloadURL();
+      sendfiles(link: fileurl, filename: fname);
+    }on FirebaseException catch(e){
+      Get.snackbar('Error occured while downloading the file', '$e');
+    }
+    
+  }
+
+Future sendfiles({required link, required filename}) async {
+  DateTime now = DateTime.now();
+  var formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
+  try {
+    dbref
+        .collection('sharedfiles')
+        .doc(currentuser!.uid)
+        .collection('userfiles')
+        .doc()
+        .set({
+          'date': formattedDate,
+          'filelink': link,
+          'filename': filename
+        }, SetOptions(merge: true));
+        Get.back();
+  } on FirebaseException catch (e) {
+    Get.snackbar('Error occured while downloading the file', '$e');
+  }
+}
+
+Future deletefile({required docid, required url}) async {
+  customdialogcircularprogressindicator('Deleting... ');
+  try {
+    await FirebaseStorage.instance.refFromURL(url).delete();
+    await dbref
+        .collection('sharedfiles')
+        .doc(currentuser!.uid)
+        .collection('userfiles')
+        .doc(docid)
+        .delete();
+    Get.back();
+  } on FirebaseException catch (e) {
+    print('error occured .$e');
+    Get.back();
   }
 }

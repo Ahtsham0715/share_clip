@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -22,6 +24,7 @@ import 'package:share_clip/settings.dart';
 import 'package:share_clip/signin.dart';
 import 'package:share_clip/tabbarviews.dart';
 import 'package:share_clip/utils.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -61,7 +64,8 @@ class _HomePageState extends State<HomePage>
         );
       }
     });
-    if(box.read('autosync')){
+    if (Platform.isAndroid) WebView.platform = AndroidWebView();
+    if (box.read('autosync')) {
       autosync();
     }
     GetDevices().then((value) {
@@ -90,7 +94,13 @@ class _HomePageState extends State<HomePage>
         floatingActionButton: _tabController.index == 1
             ? FloatingActionButton.extended(
                 backgroundColor: Colors.teal,
-                onPressed: () {},
+                onPressed: () {
+                  filepicker(filetype: FileType.any).then((value) {
+                    if (value != null) {
+                      uploadFile(value.toString());
+                    }
+                  });
+                },
                 label: customText(
                     txt: ' File ',
                     fsize: 18.0,
@@ -234,45 +244,44 @@ class _HomePageState extends State<HomePage>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                         
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
-                           _tabController.index == 0
-                          ?
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(12.0),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              tileColor: Colors.teal.withAlpha(100),
-                              // isThreeLine: true,
-                              // dense: false,
-                              subtitle: const Text(
-                                'Sync latest clipboard data across connected devices',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.white,
-                                  // fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: MaterialButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                onPressed: () {
-                                  // shownotification();
-                                  SyncData(isautosync: false);
-                                },
-                                color: Colors.teal,
-                                child:
-                                    customText(txt: 'Sync', clr: Colors.white),
-                              ),
-                            ),
-                          )
-                          :
-                          Center(),
+                          _tabController.index == 0
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(12.0),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    tileColor: Colors.teal.withAlpha(100),
+                                    // isThreeLine: true,
+                                    // dense: false,
+                                    subtitle: const Text(
+                                      'Sync latest clipboard data across connected devices',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.white,
+                                        // fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    trailing: MaterialButton(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0)),
+                                      onPressed: () {
+                                        // shownotification();
+                                        SyncData(isautosync: false);
+                                      },
+                                      color: Colors.teal,
+                                      child: customText(
+                                          txt: 'Sync', clr: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              : Center(),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.25,
                           ),
@@ -294,8 +303,7 @@ class _HomePageState extends State<HomePage>
                         ],
                       ),
                     );
-                  } 
-                  else {
+                  } else {
                     return TabBarView(
                       controller: _tabController,
                       children: [
@@ -308,11 +316,77 @@ class _HomePageState extends State<HomePage>
                               setState(() {});
                             }),
                         // 2nd tab
-                        tab2view(context: context),
+                        StreamBuilder<QuerySnapshot>(
+                            stream: dbref
+                                .collection('sharedfiles')
+                                .doc(currentuser!.uid)
+                                .collection('userfiles')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              var filedata = snapshot.data?.docs;
+                              if (snapshot.hasError) {
+                                // print(snapshot.error);
+                                return const Center(
+                                  child: Text('Something Went Wrong'),
+                                );
+                              }
+                              if (!snapshot.hasData) {
+                                // print(snapshot.error);
+                                return const Center(
+                                  child: Text('No File Available'),
+                                );
+                              }
+                              // if (snapshot.connectionState == ConnectionState.waiting) {
+                              //   return const Center(
+                              //     child: CircularProgressIndicator(
+                              //       color: Colors.teal,
+                              //     ),
+                              //   );
+                              // }
+                              if (filedata!.isEmpty) {
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Center(),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.25,
+                                      ),
+                                      Icon(
+                                        Icons.hourglass_empty,
+                                        size: 50.0,
+                                      ),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Text(
+                                        'No File Available',
+                                        style: TextStyle(
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                          // color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return RefreshIndicator(
+                                    child: tab2view(
+                                        context: context, datalist: filedata),
+                                    backgroundColor: Colors.white,
+                                    color: Colors.teal,
+                                    onRefresh: () async {
+                                      setState(() {});
+                                    });
+                              }
+                            }),
                         // 3rd tab
                         RefreshIndicator(
-                           backgroundColor: Colors.white,
-                            color: Colors.teal,
+                          backgroundColor: Colors.white,
+                          color: Colors.teal,
                           child:
                               tab3view(context: context, datalist: pinnedlist),
                           onRefresh: () async {

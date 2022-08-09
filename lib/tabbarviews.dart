@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/datafunctions.dart';
 import 'package:share_clip/notifications.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+WebViewController? _controller;
 
 Widget tab1view({required context, required datalist}) {
   // print(datalist[0]['clipboard_data']);
@@ -124,15 +128,18 @@ Widget tab1view({required context, required datalist}) {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                     customYesNoDialog(
-                                  ctx: context,
-                                  titletext: 'Are You Sure?',
-                                  contenttext: 'Do you want to delete it?',
-                                  yesOnTap: (){
-                                    Get.back();
-                                    deletedata(
-                                      docid: datalist[index].id.toString());
-                                  });
+                                    customYesNoDialog(
+                                        ctx: context,
+                                        titletext: 'Are You Sure?',
+                                        contenttext:
+                                            'Do you want to delete it?',
+                                        yesOnTap: () {
+                                          Get.back();
+                                          deletedata(
+                                              docid: datalist[index]
+                                                  .id
+                                                  .toString());
+                                        });
                                   },
                                   icon: const Icon(
                                     Icons.delete,
@@ -153,14 +160,121 @@ Widget tab1view({required context, required datalist}) {
   );
 }
 
-Widget tab2view({
-  required context,
-}) {
-  return const Center(
-    child: CircularProgressIndicator(
-      color: Colors.white,
-    ),
-  );
+Widget tab2view({required context, required datalist}) {
+  return datalist.length == 0
+      ? Center(
+          child: customText(
+              txt: 'No File Available',
+              fsize: 25.0,
+              fweight: FontWeight.w500,
+              clr: Colors.white),
+        )
+      : ListView.builder(
+          shrinkWrap: true,
+          itemCount: datalist.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(left: 5, right: 5, top: 13),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: const Color.fromARGB(255, 20, 35, 43),
+                ),
+                child: ListTile(
+                  title: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.22,
+                    child: WebView(
+                      debuggingEnabled: true,
+                      initialUrl: datalist[index]['filelink'],
+                      javascriptMode: JavascriptMode.unrestricted,
+                      // onWebViewCreated: (WebViewController webViewController) {
+                      //   _controller = webViewController;
+                      // },
+                      allowsInlineMediaPlayback: true,
+                      zoomEnabled: true,
+                    ),
+                  ),
+                  subtitle: ButtonBar(
+                    alignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding:  EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.3,
+                        ),
+                        child: const Icon(
+                            FontAwesomeIcons.mobileScreen,
+                            color: Colors.white,
+                          ),
+                      ),
+                      IconButton(
+                        // splashColor: Colors.white,
+                        onPressed: () {
+                          setclipboard(datalist[index]['filelink'].toString());
+                        },
+                        icon: const Icon(
+                          Icons.copy_outlined,
+                          color: Colors.white,
+                        ),
+                        tooltip: 'copy link',
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          // pintoggle(
+                          //     docid: datalist[index].id.toString(),
+                          //     ispinned: false);
+                        },
+                        icon: const Icon(
+                          Icons.download_outlined,
+                          color: Colors.white,
+                        ),
+                        tooltip: 'download file',
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          customYesNoDialog(
+                              ctx: context,
+                              titletext: 'Are You Sure?',
+                              contenttext: 'Do you want to delete it?',
+                              yesOnTap: () {
+                                Get.back();
+                                deletefile(
+                                  docid: datalist[index].id.toString(),
+                                  url: datalist[index]['filelink'].toString(),
+                                );
+                              });
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // ListTile(
+                //   minVerticalPadding: 0.0,
+                //   // leading: const Padding(
+                //   //   padding: EdgeInsets.symmetric(vertical: 5.0),
+                //   //   child: Icon(
+                //   //     FontAwesomeIcons.mobileScreen,
+                //   //     color: Colors.white,
+                //   //   ),
+                //   // ),
+                //   title: WebView(
+                //     initialUrl: datalist[index]['filelink'],
+                //     javascriptMode: JavascriptMode.unrestricted,
+                //   ),
+                // trailing: customText(
+                //               txt: datalist[index]['date'].toString(),
+                //               txtalign: TextAlign.center,
+                //               clr: Colors.white),
+                // ),
+              ),
+            );
+          },
+        );
 }
 
 Widget tab3view({required context, required datalist}) {
@@ -239,14 +353,14 @@ Widget tab3view({required context, required datalist}) {
                           ),
                           IconButton(
                             onPressed: () {
-                             customYesNoDialog(
+                              customYesNoDialog(
                                   ctx: context,
                                   titletext: 'Are You Sure?',
                                   contenttext: 'Do you want to delete it?',
-                                  yesOnTap: (){
+                                  yesOnTap: () {
                                     Get.back();
                                     deletedata(
-                                      docid: datalist[index].id.toString());
+                                        docid: datalist[index].id.toString());
                                   });
                             },
                             icon: const Icon(
