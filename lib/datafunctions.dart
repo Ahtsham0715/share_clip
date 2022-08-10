@@ -8,8 +8,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_clip/custom%20widgets/custom_toast.dart';
@@ -20,13 +22,13 @@ var currentuser = FirebaseAuth.instance.currentUser;
 final box = GetStorage();
 var previousclipdata;
 
-var getclipboard = Clipboard.getData('text/plain').then((value) {
-  previousclipdata = value!.text;
-});
+// var getclipboard = Clipboard.getData('text/plain').then((value) {
+//   previousclipdata = value!.text;
+// });
 Timer? timer;
-void setclipboard(data) {
+void setclipboard(data, {required showsnackbar}) {
   Clipboard.setData(ClipboardData(text: data)).then((value) {
-    styledsnackbar(txt: 'Copied to clipboard', icon: Icons.copy);
+    showsnackbar ? styledsnackbar(txt: 'Copied to clipboard', icon: Icons.copy): null;
   });
 }
 
@@ -62,7 +64,7 @@ Future SyncData({required isautosync}) async {
       .collection('clipboarddata')
       .doc(currentuser!.uid)
       .collection('userclipdata')
-      .where('clipboard_data', isEqualTo: getclipboard?.text)
+      .where('clipboard_data', isEqualTo: getclipboard!.text)
       .get()
       .then((QuerySnapshot data) {
     if (data.docs.isEmpty) {
@@ -75,10 +77,12 @@ Future SyncData({required isautosync}) async {
             .set({
           'isPinned': false,
           'date': formattedDate,
-          'clipboard_data': getclipboard!.text,
+          'clipboard_data': getclipboard.text,
         }, SetOptions(merge: true));
-        setclipboard(getclipboard.text);
+        setclipboard(getclipboard.text, showsnackbar: false);
         !isautosync ? Get.back() : null;
+        !isautosync ? styledsnackbar(
+              txt: 'Data Synced Successfully', icon: Icons.sync_alt): null;
       } on FirebaseException catch (e) {
         print('error occured .$e');
         if (!isautosync) {
@@ -281,5 +285,64 @@ Future downloadfile({required ctx, required fileurl, required filename}) async {
       print('rec: $rec  total:$total');
     }));
     Navigator.pop(ctx);
-    styledsnackbar(txt: 'File downloaded to\n$externalStorageDirPath');
+    styledsnackbar(txt: 'File downloaded to\n$externalStorageDirPath', icon: Icons.download_done);
   }
+
+  Future autorun() async {
+    if(box.read('autosync')){
+      final service = FlutterBackgroundService();
+      service.startService();
+      // service.invoke();
+      autosync();
+    }
+  }
+
+Future<void> initializeService() async {
+  final service = FlutterBackgroundService();
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      // this will be executed when app is in foreground or background in separated isolate
+      onStart: (serviceinstance){
+        // autorun();
+      },
+      foregroundServiceNotificationTitle: 'ShareClip',
+      foregroundServiceNotificationContent: 'Sync latest clipboard data across connected devices',
+      // auto start service
+      autoStart: true,
+      isForegroundMode: true,
+    ),
+    iosConfiguration: IosConfiguration(
+      // auto start service
+      autoStart: true,
+
+      // this will be executed when app is in foreground in separated isolate
+      onForeground: (sinstance){},
+
+      // you have to enable background fetch capability on xcode project
+      onBackground: (sinstance){
+        return false;
+      },
+    ),
+  );
+  // service.startService();
+}
+
+//   Future<Null> urlFileShare({required context, required url}) async {
+//   final RenderBox box = context.findRenderObject();
+//   if (Platform.isAndroid) {
+//     // var url = 'https://i.ytimg.com/vi/fq4N0hgOWzU/maxresdefault.jpg';
+//     var response = await get(Uri.parse(url));
+//     final documentDirectory = await getExternalStorageDirectory();
+//     File imgFile = new File('$documentDirectory/flutter.png');
+//     imgFile.writeAsBytesSync(response.bodyBytes);
+// Share.shareFile(File('$documentDirectory/flutter.png'),
+//         subject: 'URL File Share',
+//         text: 'Hello, check your share files!',
+//         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+//   } else {
+//     Share.share('Hello, check your share files!',
+//         subject: 'URL File Share',
+//         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+//   }
+
+// }

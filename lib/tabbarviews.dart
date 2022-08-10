@@ -113,7 +113,7 @@ Widget tab1view({required context, required datalist}) {
                                   onPressed: () {
                                     setclipboard(datalist[index]
                                             ['clipboard_data']
-                                        .toString());
+                                        .toString(), showsnackbar: true);
                                   },
                                   icon: const Icon(
                                     Icons.copy_outlined,
@@ -176,10 +176,11 @@ Widget tab2view({required context, required datalist}) {
         )
       : ListView.builder(
           shrinkWrap: true,
+          physics: ScrollPhysics(),
           itemCount: datalist.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.3,
                 decoration: BoxDecoration(
@@ -187,6 +188,8 @@ Widget tab2view({required context, required datalist}) {
                   color: const Color.fromARGB(255, 20, 35, 43),
                 ),
                 child: ListView(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -205,7 +208,12 @@ Widget tab2view({required context, required datalist}) {
                       height: MediaQuery.of(context).size.height * 0.18,
                       child: WebView(
                         debuggingEnabled: true,
-                        initialUrl: datalist[index]['filelink'],
+                        initialUrl: datalist[index]['filelink'].toString().indexOf('.pdf') != -1 || 
+                        datalist[index]['filelink'].toString().indexOf('.doc') != -1 ||
+                        datalist[index]['filelink'].toString().indexOf('.docx') != -1 ?
+                        'https://docs.google.com/gview?embedded=true&url=${datalist[index]['filelink']}'
+                        :
+                        datalist[index]['filelink'],
                         javascriptMode: JavascriptMode.unrestricted,
                         onWebViewCreated:
                             (WebViewController webViewController) {
@@ -233,11 +241,23 @@ Widget tab2view({required context, required datalist}) {
                         alignment: MainAxisAlignment.end,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // IconButton(
+                          //   // splashColor: Colors.white,
+                          //   onPressed: () {
+                          //     // setclipboard(
+                          //     //     datalist[index]['filelink'].toString());
+                          //   },
+                          //   icon: const Icon(
+                          //     Icons.share,
+                          //     color: Colors.white,
+                          //   ),
+                          //   tooltip: 'Share File',
+                          // ),
                           IconButton(
                             // splashColor: Colors.white,
                             onPressed: () {
                               setclipboard(
-                                  datalist[index]['filelink'].toString());
+                                  datalist[index]['filelink'].toString(), showsnackbar: true);
                             },
                             icon: const Icon(
                               Icons.link,
@@ -360,7 +380,7 @@ Widget tab3view({required context, required datalist}) {
                             // splashColor: Colors.white,
                             onPressed: () {
                               setclipboard(
-                                  datalist[index]['clipboard_data'].toString());
+                                  datalist[index]['clipboard_data'].toString(), showsnackbar: true);
                             },
                             icon: const Icon(
                               Icons.copy_outlined,

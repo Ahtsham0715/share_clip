@@ -42,7 +42,6 @@ dependencies:
   fluttertoast: any
   connectivity_plus: any
   permission_handler: any
-  badges: any
   google_sign_in: any
   device_info_plus: any
   get_storage: any
@@ -50,6 +49,8 @@ dependencies:
   url_launcher: any
   webview_flutter: any
   dio: any
+  flutter_background_service: any
+  http: any
 
 dev_dependencies:
   flutter_test:

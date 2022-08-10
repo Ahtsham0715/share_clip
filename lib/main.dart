@@ -21,6 +21,7 @@ void main() async {
   await GetStorage.init();
   box.writeIfNull('autosync', false);
   box.writeIfNull('notification', false);
+  // await initializeService();
   runApp(const MyApp());
 }
 
