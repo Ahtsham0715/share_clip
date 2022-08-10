@@ -204,6 +204,7 @@ class _HomePageState extends State<HomePage>
                     .collection('clipboarddata')
                     .doc(currentuser!.uid)
                     .collection('userclipdata')
+                    .orderBy('date', descending: false)
                     .snapshots(),
                 builder: (context, snapshot) {
                   var data = snapshot.data!.docs;
