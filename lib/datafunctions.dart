@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_clip/custom%20widgets/custom_toast.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 
@@ -248,3 +250,36 @@ Future deletefile({required docid, required url}) async {
     Get.back();
   }
 }
+
+Future permissionmanager() async {
+    if (await Permission.storage.status.isDenied) {
+      await Permission.storage.request();
+      // Either the permission was already granted before or the user just granted it.
+    }
+  }
+
+Future downloadfile({required ctx, required fileurl, required filename}) async {
+    permissionmanager();
+    customdialogcircularprogressindicator('Downloading...');
+    // var ref = await FirebaseStorage.instance
+    //     .ref()
+    //     .child("images")
+    //     .child('file_template')
+    //     .child('template.xlsx')
+    //     .getDownloadURL();
+    print(fileurl);
+    // print(await getTemporaryDirectory());
+    var externalStorageDirPath;
+    // final directory = await getExternalStorageDirectory();
+    Directory directory = Directory('/storage/emulated/0/Download');
+    directory.create();
+    directory.createSync();
+    externalStorageDirPath = directory.path + '/' + filename.toString();
+    Dio dio = Dio();
+    final response = await dio.download(fileurl, externalStorageDirPath,
+        onReceiveProgress: ((rec, total) {
+      print('rec: $rec  total:$total');
+    }));
+    Navigator.pop(ctx);
+    styledsnackbar(txt: 'File downloaded to\n$externalStorageDirPath');
+  }

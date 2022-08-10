@@ -49,6 +49,7 @@ dependencies:
   awesome_notifications: any
   url_launcher: any
   webview_flutter: any
+  dio: any
 
 dev_dependencies:
   flutter_test:

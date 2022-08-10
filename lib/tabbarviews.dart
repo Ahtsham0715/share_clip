@@ -1,13 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:share_clip/custom%20widgets/custom_widgets.dart';
 import 'package:share_clip/datafunctions.dart';
-import 'package:share_clip/notifications.dart';
+import 'package:url_launcher/url_launcher.dart';
+// import 'package:share_clip/notifications.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
 WebViewController? _controller;
 
 Widget tab1view({required context, required datalist}) {
@@ -174,84 +179,106 @@ Widget tab2view({required context, required datalist}) {
           itemCount: datalist.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(left: 5, right: 5, top: 13),
+              padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.3,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   color: const Color.fromARGB(255, 20, 35, 43),
                 ),
-                child: ListTile(
-                  title: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.22,
-                    child: WebView(
-                      debuggingEnabled: true,
-                      initialUrl: datalist[index]['filelink'],
-                      javascriptMode: JavascriptMode.unrestricted,
-                      // onWebViewCreated: (WebViewController webViewController) {
-                      //   _controller = webViewController;
-                      // },
-                      allowsInlineMediaPlayback: true,
-                      zoomEnabled: true,
-                    ),
-                  ),
-                  subtitle: ButtonBar(
-                    alignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding:  EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.3,
-                        ),
-                        child: const Icon(
-                            FontAwesomeIcons.mobileScreen,
-                            color: Colors.white,
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: datalist[index]['filename'].toString(),
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w400,
                           ),
-                      ),
-                      IconButton(
-                        // splashColor: Colors.white,
-                        onPressed: () {
-                          setclipboard(datalist[index]['filelink'].toString());
-                        },
-                        icon: const Icon(
-                          Icons.copy_outlined,
-                          color: Colors.white,
-                        ),
-                        tooltip: 'copy link',
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          // pintoggle(
-                          //     docid: datalist[index].id.toString(),
-                          //     ispinned: false);
-                        },
-                        icon: const Icon(
-                          Icons.download_outlined,
-                          color: Colors.white,
-                        ),
-                        tooltip: 'download file',
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          customYesNoDialog(
-                              ctx: context,
-                              titletext: 'Are You Sure?',
-                              contenttext: 'Do you want to delete it?',
-                              yesOnTap: () {
-                                Get.back();
-                                deletefile(
-                                  docid: datalist[index].id.toString(),
-                                  url: datalist[index]['filelink'].toString(),
-                                );
-                              });
-                        },
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.18,
+                      child: WebView(
+                        debuggingEnabled: true,
+                        initialUrl: datalist[index]['filelink'],
+                        javascriptMode: JavascriptMode.unrestricted,
+                        onWebViewCreated:
+                            (WebViewController webViewController) {
+                          _controller = webViewController;
+                        },
+                        //    gestureRecognizers: Set()
+                        //             ..add(
+                        //                 Factory<TapGestureRecognizer>(() => TapGestureRecognizer()
+                        // ..onTapDown = (tap) {
+                        //   styledsnackbar(txt: 'tapped inside');
+                        //   launchUrl(datalist[index]['filelink']);
+                        // })),
+                        allowsInlineMediaPlayback: true,
+                        zoomEnabled: true,
+                      ),
+                    ),
+                    ListTile(
+                      visualDensity: VisualDensity.comfortable,
+                      // dense: true,
+                      leading: const Icon(
+                        FontAwesomeIcons.mobileScreen,
+                        color: Colors.white,
+                      ),
+                      trailing: ButtonBar(
+                        alignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            // splashColor: Colors.white,
+                            onPressed: () {
+                              setclipboard(
+                                  datalist[index]['filelink'].toString());
+                            },
+                            icon: const Icon(
+                              Icons.link,
+                              color: Colors.white,
+                            ),
+                            tooltip: 'copy link',
+                          ),
+                          IconButton(
+                            onPressed: () {
+                             downloadfile(ctx: context, fileurl: datalist[index]['filelink'], filename: datalist[index]['filename']);
+                            },
+                            icon: const Icon(
+                              Icons.download_outlined,
+                              color: Colors.white,
+                            ),
+                            tooltip: 'download file',
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              customYesNoDialog(
+                                  ctx: context,
+                                  titletext: 'Are You Sure?',
+                                  contenttext: 'Do you want to delete it?',
+                                  yesOnTap: () {
+                                    Get.back();
+                                    deletefile(
+                                      docid: datalist[index].id.toString(),
+                                      url: datalist[index]['filelink']
+                                          .toString(),
+                                    );
+                                  });
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 // ListTile(
                 //   minVerticalPadding: 0.0,

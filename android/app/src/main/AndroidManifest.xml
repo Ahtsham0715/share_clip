@@ -11,7 +11,8 @@ xmlns:tools="http://schemas.android.com/tools"
    <application
         android:label="ShareClip"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:requestLegacyExternalStorage="true">
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
 </receiver>
         <activity
