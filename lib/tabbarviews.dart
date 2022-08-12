@@ -375,7 +375,9 @@ Widget tab3view({required context, required datalist}) {
                         ),
                       ),
                       trailing: customText(
-                          txt: datalist[index]['date'].toString(),
+                          txt: datalist[index]['date'].toString() +
+                              '\n' +
+                              datalist[index]['time'].toString(),
                           txtalign: TextAlign.center,
                           clr: Colors.white),
                     ),
