@@ -7,14 +7,14 @@ import 'package:file_picker/file_picker.dart';
 
 Color customPrimaryColor = const Color.fromARGB(255, 27, 41, 49);
 
-  Future<void> updateConnectionStatus(ConnectivityResult result) async {
-    if (result == ConnectivityResult.mobile ||
-        result == ConnectivityResult.wifi) {
-      styledsnackbar(txt: "You are online now");
-    } else {
-      styledsnackbar(txt: 'You are currently offline');
-    }
+Future<void> updateConnectionStatus(ConnectivityResult result) async {
+  if (result == ConnectivityResult.mobile ||
+      result == ConnectivityResult.wifi) {
+    styledsnackbar(txt: "You are online now");
+  } else {
+    styledsnackbar(txt: 'You are currently offline');
   }
+}
 
 // Custom Button Widget
 Widget customButton(buttonText, onPressedFunc, ctx, bWd, {int bHt = 6}) {

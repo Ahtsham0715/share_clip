@@ -28,7 +28,9 @@ var previousclipdata;
 Timer? timer;
 void setclipboard(data, {required showsnackbar}) {
   Clipboard.setData(ClipboardData(text: data)).then((value) {
-    showsnackbar ? styledsnackbar(txt: 'Copied to clipboard', icon: Icons.copy): null;
+    showsnackbar
+        ? styledsnackbar(txt: 'Copied to clipboard', icon: Icons.copy)
+        : null;
   });
 }
 
@@ -56,7 +58,8 @@ Future SyncData({required isautosync}) async {
       ? customdialogcircularprogressindicator('Syncing Data... ')
       : null;
   DateTime now = DateTime.now();
-  var formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
+  var formattedDate = DateFormat('MMM dd yyyy').format(now); //kk:mm:ss
+  var formattedtime = DateFormat('hh:mm a').format(now); //kk:mm:ss
   var getclipboard = await Clipboard.getData('text/plain');
   print(getclipboard?.text);
 
@@ -76,13 +79,17 @@ Future SyncData({required isautosync}) async {
             .doc()
             .set({
           'isPinned': false,
+          'createdAt': FieldValue.serverTimestamp(),
           'date': formattedDate,
+          'time': formattedtime,
           'clipboard_data': getclipboard.text,
         }, SetOptions(merge: true));
-        setclipboard(getclipboard.text, showsnackbar: false);
+        // setclipboard(getclipboard.text, showsnackbar: false);
         !isautosync ? Get.back() : null;
-        !isautosync ? styledsnackbar(
-              txt: 'Data Synced Successfully', icon: Icons.sync_alt): null;
+        !isautosync
+            ? styledsnackbar(
+                txt: 'Data Synced Successfully', icon: Icons.sync_alt)
+            : null;
       } on FirebaseException catch (e) {
         print('error occured .$e');
         if (!isautosync) {
@@ -97,6 +104,24 @@ Future SyncData({required isautosync}) async {
         styledsnackbar(
             txt: 'Data Already Found', icon: Icons.sms_failed_outlined);
       }
+    }
+  });
+}
+
+Future autocopy() async {
+  print('in auto func');
+  dbref
+      .collection('clipboarddata')
+      .doc(currentuser!.uid)
+      .collection('userclipdata')
+      .snapshots()
+      .listen((event) {
+    print('data changed.');
+    if (event.docChanges.length == 1) {
+      event.docChanges.forEach((element) {
+        print(element.doc['clipboard_data']);
+        setclipboard(element.doc['clipboard_data'], showsnackbar: false);
+      });
     }
   });
 }
@@ -136,7 +161,6 @@ Future deletedata({required docid}) async {
     Get.back();
   }
 }
-
 
 Future GetDevices() async {
   List connectedDevices = [];
@@ -193,30 +217,29 @@ Future editDeviceName({required updatedName, required deviceid}) async {
 }
 
 Future<void> uploadFile(String filePath) async {
-    customdialogcircularprogressindicator('Uploading... ');
-    File file = File(filePath);
-    var filename = filePath.toString().split('/').last;
-    try {
-      await FirebaseStorage.instance
-          .ref('${currentuser!.uid}/${filename}')
-          .putFile(file);
-          downloadURLfunc(filename);
-    } on FirebaseException catch (e) {
-      Get.snackbar('Error occured while uploading the file', '$e');
-    }
+  customdialogcircularprogressindicator('Uploading... ');
+  File file = File(filePath);
+  var filename = filePath.toString().split('/').last;
+  try {
+    await FirebaseStorage.instance
+        .ref('${currentuser!.uid}/${filename}')
+        .putFile(file);
+    downloadURLfunc(filename);
+  } on FirebaseException catch (e) {
+    Get.snackbar('Error occured while uploading the file', '$e');
   }
+}
 
-  Future<void> downloadURLfunc(fname) async {
-    try{
-      String fileurl = await FirebaseStorage.instance
+Future<void> downloadURLfunc(fname) async {
+  try {
+    String fileurl = await FirebaseStorage.instance
         .ref('${currentuser!.uid}/${fname}')
         .getDownloadURL();
-      sendfiles(link: fileurl, filename: fname);
-    }on FirebaseException catch(e){
-      Get.snackbar('Error occured while downloading the file', '$e');
-    }
-    
+    sendfiles(link: fileurl, filename: fname);
+  } on FirebaseException catch (e) {
+    Get.snackbar('Error occured while downloading the file', '$e');
   }
+}
 
 Future sendfiles({required link, required filename}) async {
   DateTime now = DateTime.now();
@@ -227,12 +250,9 @@ Future sendfiles({required link, required filename}) async {
         .doc(currentuser!.uid)
         .collection('userfiles')
         .doc()
-        .set({
-          'date': formattedDate,
-          'filelink': link,
-          'filename': filename
-        }, SetOptions(merge: true));
-        Get.back();
+        .set({'date': formattedDate, 'filelink': link, 'filename': filename},
+            SetOptions(merge: true));
+    Get.back();
   } on FirebaseException catch (e) {
     Get.snackbar('Error occured while downloading the file', '$e');
   }
@@ -256,57 +276,60 @@ Future deletefile({required docid, required url}) async {
 }
 
 Future permissionmanager() async {
-    if (await Permission.storage.status.isDenied) {
-      await Permission.storage.request();
-      // Either the permission was already granted before or the user just granted it.
-    }
+  if (await Permission.storage.status.isDenied) {
+    await Permission.storage.request();
+    // Either the permission was already granted before or the user just granted it.
   }
+}
 
 Future downloadfile({required ctx, required fileurl, required filename}) async {
-    permissionmanager();
-    customdialogcircularprogressindicator('Downloading...');
-    // var ref = await FirebaseStorage.instance
-    //     .ref()
-    //     .child("images")
-    //     .child('file_template')
-    //     .child('template.xlsx')
-    //     .getDownloadURL();
-    print(fileurl);
-    // print(await getTemporaryDirectory());
-    var externalStorageDirPath;
-    // final directory = await getExternalStorageDirectory();
-    Directory directory = Directory('/storage/emulated/0/Download');
-    directory.create();
-    directory.createSync();
-    externalStorageDirPath = directory.path + '/' + filename.toString();
-    Dio dio = Dio();
-    final response = await dio.download(fileurl, externalStorageDirPath,
-        onReceiveProgress: ((rec, total) {
-      print('rec: $rec  total:$total');
-    }));
-    Navigator.pop(ctx);
-    styledsnackbar(txt: 'File downloaded to\n$externalStorageDirPath', icon: Icons.download_done);
-  }
+  permissionmanager();
+  customdialogcircularprogressindicator('Downloading...');
+  // var ref = await FirebaseStorage.instance
+  //     .ref()
+  //     .child("images")
+  //     .child('file_template')
+  //     .child('template.xlsx')
+  //     .getDownloadURL();
+  print(fileurl);
+  // print(await getTemporaryDirectory());
+  var externalStorageDirPath;
+  // final directory = await getExternalStorageDirectory();
+  Directory directory = Directory('/storage/emulated/0/Download');
+  directory.create();
+  directory.createSync();
+  externalStorageDirPath = directory.path + '/' + filename.toString();
+  Dio dio = Dio();
+  final response = await dio.download(fileurl, externalStorageDirPath,
+      onReceiveProgress: ((rec, total) {
+    print('rec: $rec  total:$total');
+  }));
+  Navigator.pop(ctx);
+  styledsnackbar(
+      txt: 'File downloaded to\n$externalStorageDirPath',
+      icon: Icons.download_done);
+}
 
-  Future autorun() async {
-    if(box.read('autosync')){
-      final service = FlutterBackgroundService();
-      service.startService();
-      // service.invoke();
-      autosync();
-    }
+Future autorun() async {
+  if (box.read('autosync')) {
+    final service = FlutterBackgroundService();
+    service.startService();
+    // service.invoke();
+    autosync();
   }
+}
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       // this will be executed when app is in foreground or background in separated isolate
-      onStart: (serviceinstance){
+      onStart: (serviceinstance) {
         // autorun();
       },
       foregroundServiceNotificationTitle: 'ShareClip',
-      foregroundServiceNotificationContent: 'Sync latest clipboard data across connected devices',
+      foregroundServiceNotificationContent:
+          'Sync latest clipboard data across connected devices',
       // auto start service
       autoStart: true,
       isForegroundMode: true,
@@ -316,10 +339,10 @@ Future<void> initializeService() async {
       autoStart: true,
 
       // this will be executed when app is in foreground in separated isolate
-      onForeground: (sinstance){},
+      onForeground: (sinstance) {},
 
       // you have to enable background fetch capability on xcode project
-      onBackground: (sinstance){
+      onBackground: (sinstance) {
         return false;
       },
     ),

@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage>
     _tabController = TabController(length: 3, vsync: this);
     formattedDate = DateFormat('MMM dd yyyy\nhh:mm a').format(now); //kk:mm:ss
     readdeviceinfo();
+    autocopy();
     super.initState();
     _tabController.addListener(() {
       setState(() {});
@@ -200,12 +201,12 @@ class _HomePageState extends State<HomePage>
               ];
             },
             body: StreamBuilder<QuerySnapshot>(
-
                 stream: dbref
                     .collection('clipboarddata')
                     .doc(currentuser!.uid)
                     .collection('userclipdata')
-                    .orderBy('date', descending: false)
+                    .orderBy('createdAt', descending: true)
+                    // .orderBy('time', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   var data = snapshot.data!.docs;

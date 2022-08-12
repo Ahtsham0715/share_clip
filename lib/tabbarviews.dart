@@ -91,7 +91,9 @@ Widget tab1view({required context, required datalist}) {
                               ),
                             ),
                             trailing: customText(
-                                txt:  datalist[index]['date'].toString(),
+                                txt: datalist[index]['date'].toString() +
+                                    '\n' +
+                                    datalist[index]['time'].toString(),
                                 txtalign: TextAlign.center,
                                 clr: Colors.white),
                           ),
@@ -111,9 +113,10 @@ Widget tab1view({required context, required datalist}) {
                                 IconButton(
                                   // splashColor: Colors.white,
                                   onPressed: () {
-                                    setclipboard(datalist[index]
-                                            ['clipboard_data']
-                                        .toString(), showsnackbar: true);
+                                    setclipboard(
+                                        datalist[index]['clipboard_data']
+                                            .toString(),
+                                        showsnackbar: true);
                                   },
                                   icon: const Icon(
                                     Icons.copy_outlined,
@@ -180,7 +183,8 @@ Widget tab2view({required context, required datalist}) {
           itemCount: datalist.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              padding: const EdgeInsets.only(
+                  left: 20, right: 20, top: 10, bottom: 10),
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.3,
                 decoration: BoxDecoration(
@@ -208,12 +212,20 @@ Widget tab2view({required context, required datalist}) {
                       height: MediaQuery.of(context).size.height * 0.18,
                       child: WebView(
                         debuggingEnabled: true,
-                        initialUrl: datalist[index]['filelink'].toString().indexOf('.pdf') != -1 || 
-                        datalist[index]['filelink'].toString().indexOf('.doc') != -1 ||
-                        datalist[index]['filelink'].toString().indexOf('.docx') != -1 ?
-                        'https://docs.google.com/gview?embedded=true&url=${datalist[index]['filelink']}'
-                        :
-                        datalist[index]['filelink'],
+                        initialUrl: datalist[index]['filelink']
+                                        .toString()
+                                        .indexOf('.pdf') !=
+                                    -1 ||
+                                datalist[index]['filelink']
+                                        .toString()
+                                        .indexOf('.doc') !=
+                                    -1 ||
+                                datalist[index]['filelink']
+                                        .toString()
+                                        .indexOf('.docx') !=
+                                    -1
+                            ? 'https://docs.google.com/gview?embedded=true&url=${datalist[index]['filelink']}'
+                            : datalist[index]['filelink'],
                         javascriptMode: JavascriptMode.unrestricted,
                         onWebViewCreated:
                             (WebViewController webViewController) {
@@ -257,7 +269,8 @@ Widget tab2view({required context, required datalist}) {
                             // splashColor: Colors.white,
                             onPressed: () {
                               setclipboard(
-                                  datalist[index]['filelink'].toString(), showsnackbar: true);
+                                  datalist[index]['filelink'].toString(),
+                                  showsnackbar: true);
                             },
                             icon: const Icon(
                               Icons.link,
@@ -267,7 +280,10 @@ Widget tab2view({required context, required datalist}) {
                           ),
                           IconButton(
                             onPressed: () {
-                             downloadfile(ctx: context, fileurl: datalist[index]['filelink'], filename: datalist[index]['filename']);
+                              downloadfile(
+                                  ctx: context,
+                                  fileurl: datalist[index]['filelink'],
+                                  filename: datalist[index]['filename']);
                             },
                             icon: const Icon(
                               Icons.download_outlined,
@@ -380,7 +396,8 @@ Widget tab3view({required context, required datalist}) {
                             // splashColor: Colors.white,
                             onPressed: () {
                               setclipboard(
-                                  datalist[index]['clipboard_data'].toString(), showsnackbar: true);
+                                  datalist[index]['clipboard_data'].toString(),
+                                  showsnackbar: true);
                             },
                             icon: const Icon(
                               Icons.copy_outlined,
