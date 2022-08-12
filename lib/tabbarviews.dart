@@ -91,7 +91,7 @@ Widget tab1view({required context, required datalist}) {
                               ),
                             ),
                             trailing: customText(
-                                txt: datalist[index]['date'].toString(),
+                                txt:  datalist[index]['date'].toString(),
                                 txtalign: TextAlign.center,
                                 clr: Colors.white),
                           ),

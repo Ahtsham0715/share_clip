@@ -200,6 +200,7 @@ class _HomePageState extends State<HomePage>
               ];
             },
             body: StreamBuilder<QuerySnapshot>(
+
                 stream: dbref
                     .collection('clipboarddata')
                     .doc(currentuser!.uid)
